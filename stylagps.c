@@ -11,7 +11,7 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-#include "styl-agps.h"
+#include "stylagps.h"
 
 #include <curl/curl.h>
 #include <json-c/json.h>
