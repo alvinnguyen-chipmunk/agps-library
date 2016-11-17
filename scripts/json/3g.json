@@ -1,9 +1,0 @@
-{
- "cellTowers":
- [
-  { "cellId": 56051, "locationAreaCode": 2021, "mobileCountryCode": 525, "mobileNetworkCode": 5, "age": 0, "signalStrength": -87 },
-  { "cellId": 19052, "locationAreaCode": 2031, "mobileCountryCode": 525, "mobileNetworkCode": 5, "age": 0, "signalStrength": -93 },
-  { "cellId": 3454, "locationAreaCode": 20, "mobileCountryCode": 525, "mobileNetworkCode": 3, "age": 0, "signalStrength": -96 },
-  { "cellId": 6106, "locationAreaCode": 20, "mobileCountryCode": 525, "mobileNetworkCode": 3, "age": 0, "signalStrength": -100 }
- ]
-}
