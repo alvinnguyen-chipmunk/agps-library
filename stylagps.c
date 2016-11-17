@@ -24,20 +24,82 @@ extern "C"
 #include <sys/mman.h>
 #include <string.h>
 
-#define JSON_BUFFER		100000
-#define DEFAULT_JSON_FILE	"/data/workspace/agps/styl-agps.json"
-
-
 static int CallBackWrite(void* buf, size_t len, size_t size, void* userdata);
 static void ExportLocation(char *httpData, double *longitude, double *latitude, double *accuracy);
+static int ParseConfig(char *buffer, const int bufferLen, node_t *paramDict);
+static int GetValueFromKey(node_t *paramDict, const char* key, char *value);
+static int ReadFile(const char* fileName, char *buffer);
 
 int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 {
-	const char *url = "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBx6LZQwV-73Z_LtJLXvcnpUMJpCIaCR6g";
-	const char *jsonFile = getenv("STYL_AGPS_FILE");
+	char url[URL_LEN];
+	char jsonFile[PARAM_LEN];
 	char jsonString[JSON_BUFFER];
 	char httpData[JSON_BUFFER];
+	char keyAPI[PARAM_LEN];
 	char *stylDebug = getenv("STYL_DEBUG");
+	char confBuffer[BUFFER_LEN];
+	char tmp[PARAM_LEN];	// to be used to read non-char key
+	node_t paramDict[MAX_PARAM_NODE];
+	int ret = EXIT_SUCCESS;
+	unsigned int timeoutSec = DEFAULT_TIME_SEC;
+
+	/* Initialize all arrays */
+	memset(url, '\0', sizeof(url));
+	memset(jsonFile, '\0', sizeof(jsonFile));
+	memset(jsonString, '\0', sizeof(jsonString));
+	memset(httpData, '\0', sizeof(httpData));
+	memset(keyAPI, '\0', sizeof(keyAPI));
+	memset(confBuffer, '\0', sizeof(confBuffer));
+
+	/* Read stylagps.conf */
+	ret = ReadFile(CONFIG_FILE, confBuffer);
+	if (ret)
+	{
+		printf("ERROR: %s: line %d\n", __func__, __LINE__);
+		goto EXIT;
+	}
+	ret = ParseConfig(confBuffer, sizeof(confBuffer), paramDict);
+
+	/* Read Geo Location URL from CONFIG_FILE */
+	ret = GetValueFromKey(paramDict, "geoLocationURL", url);
+	if (ret)
+	{
+		printf("ERROR: %s: line %d: geoLocationURL is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
+		goto EXIT;
+	}
+	printf("DEBUG: url: %s\n", url);
+
+	/* Read Key API from CONFIG_FILE */
+	ret = GetValueFromKey(paramDict, "keyAPI", keyAPI);
+	if (ret)
+	{
+		printf("ERROR: %s: line %d: keyAPI is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
+		goto EXIT;
+	}
+	sprintf(url, "%skey=%s", url, keyAPI);
+	printf("DEBUG: url: %s\n", url);
+
+	/* Read jsonFile path from CONFIG_FILE */
+	ret = GetValueFromKey(paramDict, "jsonFile", jsonFile);
+	if (ret)
+	{
+		printf("ERROR: %s: line %d: jsonFile I is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
+		goto EXIT;
+	}
+	printf("DEBUG: jsonFile: %s\n", jsonFile);
+
+	/* Read timeoutSec (SEC) from CONFIG_FILE */
+	ret = GetValueFromKey(paramDict, "timeoutSec", tmp);
+	if (ret)
+	{
+		printf("No <timeoutSec> in %s. Using default 10 sec\n", CONFIG_FILE);
+		timeoutSec = DEFAULT_TIME_SEC;
+	}
+	else
+	{
+		timeoutSec = (unsigned int)atoi(tmp);
+	}
 
 	/* Response information. */
 	int httpCode = 0;
@@ -51,19 +113,15 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	headers = curl_slist_append(headers, "content-type: application/json");
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-	if (NULL == jsonFile)
-	{
-		jsonFile = (char *)DEFAULT_JSON_FILE;
-	}
 	memset(jsonString, '\0', JSON_BUFFER);
-	ReadFullFile(jsonFile, jsonString);
+	ReadFile(jsonFile, jsonString);
 	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonString);
 
 	/* Don't bother trying IPv6, which would increase DNS resolution time. */
 	curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 
-	/* Don't wait forever, time out after 10 seconds. */
-	curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);
+	/* Don't wait forever, time out after timeoutSec seconds. */
+	curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeoutSec);
 
 	/* Follow HTTP redirects if necessary. */
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
@@ -94,13 +152,15 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	else
 	{
 		printf("Couldn't GET from %s  - exiting\n", url);
-		return 1;
+		ret = EXIT_FAILURE;
+		return ret;
 	}
-	
-	return 0;
+
+EXIT:
+	return ret;
 }
 
-static int ReadFullFile(const char* fileName, char *buffer)
+static int ReadFile(const char* fileName, char *buffer)
 {
 	int ret = EXIT_SUCCESS;
 	int fd = 0;
@@ -199,7 +259,7 @@ static void ExportLocation(char *httpData, double *longitude, double *latitude, 
 	}
 }
 
-static int ParseConfig(char *buffer, const int bufferLen, node_t *paramList )
+static int ParseConfig(char *buffer, const int bufferLen, node_t *paramDict )
 {
 	int paramCount = 0;
 	int pos = 0;
@@ -217,14 +277,14 @@ static int ParseConfig(char *buffer, const int bufferLen, node_t *paramList )
 		switch (buffer[i])
 		{
 			case '=':
-				memset(paramList[paramCount].key, '\0', DATA_LEN);
-				memcpy(paramList[paramCount].key, &buffer[pos], (i-pos));
+				memset(paramDict[paramCount].key, '\0', PARAM_LEN);
+				memcpy(paramDict[paramCount].key, &buffer[pos], (i-pos));
 				pos = i + 1;
 				break;
 
 			case '\n':
-				memset(paramList[paramCount].value, '\0', DATA_LEN);
-				memcpy(paramList[paramCount].value, &buffer[pos], (i-pos));
+				memset(paramDict[paramCount].value, '\0', PARAM_LEN);
+				memcpy(paramDict[paramCount].value, &buffer[pos], (i-pos));
 				pos = i + 1;
 				paramCount++;
 				break;
@@ -237,6 +297,24 @@ static int ParseConfig(char *buffer, const int bufferLen, node_t *paramList )
 	
 EXIT:
 	return paramCount;
+}
+
+static int GetValueFromKey(node_t *paramDict, const char* key, char *value)
+{
+	int ret = EXIT_FAILURE;
+
+	for (int i = 0; i < MAX_PARAM_NODE; i++)
+	{
+		if ( 0 == strncmp(paramDict[i].key, key, PARAM_LEN) )
+		{
+			strncpy(value, paramDict[i].value, PARAM_LEN);
+			ret = EXIT_SUCCESS;
+			goto EXIT;
+		}
+	}
+
+EXIT:
+	return ret;
 }
 
 #ifdef __cplusplus

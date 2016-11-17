@@ -7,17 +7,22 @@
 //
 
 #include <stdio.h>
-#include "styl-agps.h"
+#include <stdlib.h>
+#include "stylagps.h"
 
 int main(int argc, const char * argv[]) {
 
 	double longitude = 0;
 	double latitude = 0;
 	double accuracy = 0;
+	int ret = 0;
 
-	StylAgpsGetLocation(&longitude, &latitude, &accuracy);
+	ret = StylAgpsGetLocation(&longitude, &latitude, &accuracy);
 
-	printf("Lng: %f\nLat: %f\nAcc: %f\n", longitude, latitude, accuracy);
+	if (EXIT_SUCCESS == ret)
+	{
+		printf("Lng: %f\nLat: %f\nAcc: %f\n", longitude, latitude, accuracy);
+	}
 
-    return 0;
+    return ret;
 }

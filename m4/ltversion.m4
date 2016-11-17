@@ -1,0 +1,1 @@
+/opt/poky/2.1.1/sysroots/x86_64-pokysdk-linux/usr/share/aclocal/ltversion.m4
