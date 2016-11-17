@@ -19,14 +19,13 @@ function CreateRawInput()
 	if [[ ${1} = "test" ]]; then
 		GetInput="cat ${2}"
 	else
-		GetInput="iwlist ${WIFI_INTERFACE} scan"
+		GetInput="sudo iwlist ${WIFI_INTERFACE} scan"
 	fi
 
 	${GetInput} | \
 	grep -i \
 		-e "Signal" \
-		-e "address" \
-		-e "channel" | \
+		-e "address" | \
 		grep -i -v "frequency" \
 		> ${WIFI_RAW}
 }
