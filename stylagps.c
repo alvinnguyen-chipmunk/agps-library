@@ -37,6 +37,8 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	char jsonString[JSON_BUFFER];
 	char httpData[JSON_BUFFER];
 	char keyAPI[PARAM_LEN];
+	char wifiSnipper[PARAM_LEN];
+	char snippingCmd[PARAM_LEN * 2 + 20];		// "/bin/bash ${wifiSnipper} > ${jsonFile}"
 	char *stylDebug = getenv("STYL_DEBUG");
 	char confBuffer[BUFFER_LEN];
 	char tmp[PARAM_LEN];	// to be used to read non-char key
@@ -51,6 +53,8 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	memset(httpData, '\0', sizeof(httpData));
 	memset(keyAPI, '\0', sizeof(keyAPI));
 	memset(confBuffer, '\0', sizeof(confBuffer));
+	memset(snippingCmd, '\0', sizeof(snippingCmd));
+	memset(wifiSnipper, '\0', sizeof(wifiSnipper));
 
 	/* Read stylagps.conf */
 	ret = ReadFile(CONFIG_FILE, confBuffer);
@@ -101,6 +105,17 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 		timeoutSec = (unsigned int)atoi(tmp);
 	}
 
+	/* Read WiFi snipper path from CONFIG_FILE */
+	ret = GetValueFromKey(paramDict, "wifiSnipper", wifiSnipper);
+	if (ret)
+	{
+		printf("ERROR: %s: line %d: wifiSnipper I is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
+		goto EXIT;
+	}
+	sprintf(snippingCmd, "/bin/bash %s > %s", wifiSnipper, jsonFile);
+	printf("DEBUG: snippingCmd: %s\n", snippingCmd);
+	system(snippingCmd);
+
 	/* Response information. */
 	int httpCode = 0;
 
@@ -113,6 +128,7 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	headers = curl_slist_append(headers, "content-type: application/json");
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
+	/* Read WiFi neighbors from stylagps.json */
 	memset(jsonString, '\0', JSON_BUFFER);
 	ReadFile(jsonFile, jsonString);
 	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonString);
@@ -157,6 +173,7 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	}
 
 EXIT:
+	remove(jsonFile);
 	return ret;
 }
 
