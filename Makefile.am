@@ -1,7 +1,7 @@
 lib_LTLIBRARIES = libstylagps.la
 ACLOCAL_AMFLAGS = -I m4
 AM_CFLAGS = -std=c99
-AM_LDFLAGS=-L/usr/lib -lcurl -ljson-c
+AM_LDFLAGS= -lcurl -ljson-c
 libstylagps_la_SOURCES = stylagps.c
 include_HEADERS = stylagps.h
 
