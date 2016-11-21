@@ -36,40 +36,8 @@ fi
 as_nl='
 '
 export as_nl
-# Printing a long string crashes Solaris 7 /usr/bin/printf.
-as_echo='\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'
-as_echo=$as_echo$as_echo$as_echo$as_echo$as_echo
-as_echo=$as_echo$as_echo$as_echo$as_echo$as_echo$as_echo
-# Prefer a ksh shell builtin over an external printf program on Solaris,
-# but without wasting forks for bash or zsh.
-if test -z "$BASH_VERSION$ZSH_VERSION" \
-    && (test "X`print -r -- $as_echo`" = "X$as_echo") 2>/dev/null; then
-  as_echo='print -r --'
-  as_echo_n='print -rn --'
-elif (test "X`printf %s $as_echo`" = "X$as_echo") 2>/dev/null; then
-  as_echo='printf %s\n'
-  as_echo_n='printf %s'
-else
-  if test "X`(/usr/ucb/echo -n -n $as_echo) 2>/dev/null`" = "X-n $as_echo"; then
-    as_echo_body='eval /usr/ucb/echo -n "$1$as_nl"'
-    as_echo_n='/usr/ucb/echo -n'
-  else
-    as_echo_body='eval expr "X$1" : "X\\(.*\\)"'
-    as_echo_n_body='eval
-      arg=$1;
-      case $arg in #(
-      *"$as_nl"*)
-	expr "X$arg" : "X\\(.*\\)$as_nl";
-	arg=`expr "X$arg" : ".*$as_nl\\(.*\\)"`;;
-      esac;
-      expr "X$arg" : "X\\(.*\\)" | tr -d "$as_nl"
-    '
-    export as_echo_n_body
-    as_echo_n='sh -c $as_echo_n_body as_echo'
-  fi
-  export as_echo_body
-  as_echo='sh -c $as_echo_body as_echo'
-fi
+as_echo='printf %s\n'
+as_echo_n='printf %s'
 
 # The user is always right.
 if test "${PATH_SEPARATOR+set}" != set; then
@@ -224,7 +192,7 @@ do
   as_found=:
   case $as_dir in #(
 	 /*)
-	   for as_base in sh bash ksh sh5; do
+	   for as_base in bash sh ksh sh5; do
 	     # Try only shells that exist, to save several forks.
 	     as_shell=$as_dir/$as_base
 	     if { test -f "$as_shell" || test -f "$as_shell.exe"; } &&
@@ -2138,7 +2106,6 @@ _ACEOF
 # Let the site file select an alternate cache file if it wants to.
 # Prefer an explicitly selected file to automatically selected ones.
 ac_site_file1=NONE
-ac_site_file2=NONE
 if test -n "$CONFIG_SITE"; then
   # We do not want a PATH search for config.site.
   case $CONFIG_SITE in #((
@@ -2146,14 +2113,8 @@ if test -n "$CONFIG_SITE"; then
     */*) ac_site_file1=$CONFIG_SITE;;
     *)   ac_site_file1=./$CONFIG_SITE;;
   esac
-elif test "x$prefix" != xNONE; then
-  ac_site_file1=$prefix/share/config.site
-  ac_site_file2=$prefix/etc/config.site
-else
-  ac_site_file1=$ac_default_prefix/share/config.site
-  ac_site_file2=$ac_default_prefix/etc/config.site
 fi
-for ac_site_file in "$ac_site_file1" "$ac_site_file2"
+for ac_site_file in $ac_site_file1
 do
   test "x$ac_site_file" = xNONE && continue
   if test /dev/null != "$ac_site_file" && test -r "$ac_site_file"; then
@@ -2394,57 +2355,8 @@ case $srcdir in
     as_fn_error $? "unsafe srcdir value: '$srcdir'" "$LINENO" 5;;
 esac
 
-# Do 'set' in a subshell so we don't clobber the current shell's
-# arguments.  Must try -L first in case configure is actually a
-# symlink; some systems play weird games with the mod time of symlinks
-# (eg FreeBSD returns the mod time of the symlink's containing
-# directory).
-if (
-   am_has_slept=no
-   for am_try in 1 2; do
-     echo "timestamp, slept: $am_has_slept" > conftest.file
-     set X `ls -Lt "$srcdir/configure" conftest.file 2> /dev/null`
-     if test "$*" = "X"; then
-	# -L didn't work.
-	set X `ls -t "$srcdir/configure" conftest.file`
-     fi
-     if test "$*" != "X $srcdir/configure conftest.file" \
-	&& test "$*" != "X conftest.file $srcdir/configure"; then
-
-	# If neither matched, then we have a broken ls.  This can happen
-	# if, for instance, CONFIG_SHELL is bash and it inherits a
-	# broken ls alias from the environment.  This has actually
-	# happened.  Such a system could not be considered "sane".
-	as_fn_error $? "ls -t appears to fail.  Make sure there is not a broken
-  alias in your environment" "$LINENO" 5
-     fi
-     if test "$2" = conftest.file || test $am_try -eq 2; then
-       break
-     fi
-     # Just in case.
-     sleep 1
-     am_has_slept=yes
-   done
-   test "$2" = conftest.file
-   )
-then
-   # Ok.
-   :
-else
-   as_fn_error $? "newly created file is older than distributed files!
-Check your system clock" "$LINENO" 5
-fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-# If we didn't sleep, we still need to ensure time stamps of config.status and
-# generated files are strictly newer.
-am_sleep_pid=
-if grep 'slept: no' conftest.file >/dev/null 2>&1; then
-  ( sleep 1 ) &
-  am_sleep_pid=$!
-fi
-
-rm -f conftest.file
 
 test "$program_prefix" != NONE &&
   program_transform_name="s&^&$program_prefix&;$program_transform_name"
@@ -15996,14 +15908,6 @@ LIBOBJS=$ac_libobjs
 LTLIBOBJS=$ac_ltlibobjs
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking that generated files are newer than configure" >&5
-$as_echo_n "checking that generated files are newer than configure... " >&6; }
-   if test -n "$am_sleep_pid"; then
-     # Hide warnings about reused PIDs.
-     wait $am_sleep_pid 2>/dev/null
-   fi
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: done" >&5
-$as_echo "done" >&6; }
  if test -n "$EXEEXT"; then
   am__EXEEXT_TRUE=
   am__EXEEXT_FALSE='#'
@@ -16073,40 +15977,8 @@ fi
 as_nl='
 '
 export as_nl
-# Printing a long string crashes Solaris 7 /usr/bin/printf.
-as_echo='\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'
-as_echo=$as_echo$as_echo$as_echo$as_echo$as_echo
-as_echo=$as_echo$as_echo$as_echo$as_echo$as_echo$as_echo
-# Prefer a ksh shell builtin over an external printf program on Solaris,
-# but without wasting forks for bash or zsh.
-if test -z "$BASH_VERSION$ZSH_VERSION" \
-    && (test "X`print -r -- $as_echo`" = "X$as_echo") 2>/dev/null; then
-  as_echo='print -r --'
-  as_echo_n='print -rn --'
-elif (test "X`printf %s $as_echo`" = "X$as_echo") 2>/dev/null; then
-  as_echo='printf %s\n'
-  as_echo_n='printf %s'
-else
-  if test "X`(/usr/ucb/echo -n -n $as_echo) 2>/dev/null`" = "X-n $as_echo"; then
-    as_echo_body='eval /usr/ucb/echo -n "$1$as_nl"'
-    as_echo_n='/usr/ucb/echo -n'
-  else
-    as_echo_body='eval expr "X$1" : "X\\(.*\\)"'
-    as_echo_n_body='eval
-      arg=$1;
-      case $arg in #(
-      *"$as_nl"*)
-	expr "X$arg" : "X\\(.*\\)$as_nl";
-	arg=`expr "X$arg" : ".*$as_nl\\(.*\\)"`;;
-      esac;
-      expr "X$arg" : "X\\(.*\\)" | tr -d "$as_nl"
-    '
-    export as_echo_n_body
-    as_echo_n='sh -c $as_echo_n_body as_echo'
-  fi
-  export as_echo_body
-  as_echo='sh -c $as_echo_body as_echo'
-fi
+as_echo='printf %s\n'
+as_echo_n='printf %s'
 
 # The user is always right.
 if test "${PATH_SEPARATOR+set}" != set; then
