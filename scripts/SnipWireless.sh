@@ -2,7 +2,7 @@
 
 WIFI_RAW=./raw_wifi
 WIFI_FILTERED=./filtered_wifi
-WIFI_INTERFACE=wlan0
+WIFI_INTERFACE=eth1
 
 function main()
 {
@@ -19,7 +19,7 @@ function CreateRawInput()
 	if [[ ${1} = "test" ]]; then
 		GetInput="cat ${2}"
 	else
-		GetInput="sudo iwlist ${WIFI_INTERFACE} scan"
+		GetInput="iwlist ${WIFI_INTERFACE} scan"
 	fi
 
 	${GetInput} | \
