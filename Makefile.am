@@ -10,6 +10,6 @@ bin_PROGRAMS = stylagps_demo
 stylagps_demo_SOURCES = examples/main.cpp
 stylagps_demo_LDADD = libstylagps.la
 
-extradir = $(prefix)/etc/stylagps
+extradir = /etc/stylagps
 extra_DATA = stylagps.conf scripts/SnipWireless.sh
 
