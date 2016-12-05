@@ -225,7 +225,7 @@ static int CallBackWrite(void* buffer, size_t len, size_t size, void* userData) 
 
 	if (len * size > 0)
 	{
-		sLen = strnlen((char *)userData, JSON_BUFFER);
+		sLen = strnlen((char *)userData, (size_t) JSON_BUFFER);
 
 		strncpy(&((char*)userData)[sLen], (char*)buffer, (len * size));
 	}
