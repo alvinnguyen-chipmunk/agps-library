@@ -2,4 +2,4 @@
 
 echo "Generating configure files... may take a while."
 
-autoreconf --install --force
+aclocal && autoconf && automake --add-missing --copy
