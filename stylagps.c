@@ -27,6 +27,7 @@ extern "C"
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <string.h>
+#include <assert.h>
 
 static int CallBackWrite(void* buf, size_t len, size_t size, void* userdata);
 static void ExportLocation(char *httpData, double *longitude, double *latitude, double *accuracy);
@@ -67,7 +68,13 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 		printf("ERROR: %s: line %d\n", __func__, __LINE__);
 		goto EXIT;
 	}
+
 	ret = ParseConfig(confBuffer, sizeof(confBuffer), paramDict);
+	if (ret <= 0)
+	{
+		printf("ERROR: No param found. Please check /etc/stylagps/stylagps.conf");
+		goto EXIT;
+	}
 
 	/* Read Geo Location URL from CONFIG_FILE */
 	ret = GetValueFromKey(paramDict, "geoLocationURL", url);
@@ -76,7 +83,10 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 		printf("ERROR: %s: line %d: geoLocationURL is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
 		goto EXIT;
 	}
-	printf("DEBUG: url: %s\n", url);
+	if (stylDebug)
+	{
+		printf("DEBUG: url: %s\n", url);
+	}
 
 	/* Read Key API from CONFIG_FILE */
 	ret = GetValueFromKey(paramDict, "keyAPI", keyAPI);
@@ -85,8 +95,11 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 		printf("ERROR: %s: line %d: keyAPI is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
 		goto EXIT;
 	}
-	sprintf(url, "%skey=%s", url, keyAPI);
-	printf("DEBUG: url: %s\n", url);
+	if (stylDebug)
+	{
+		sprintf(url, "%skey=%s", url, keyAPI);
+		printf("DEBUG: url: %s\n", url);
+	}
 
 	/* Read jsonFile path from CONFIG_FILE */
 	ret = GetValueFromKey(paramDict, "jsonFile", jsonFile);
@@ -95,13 +108,19 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 		printf("ERROR: %s: line %d: jsonFile I is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
 		goto EXIT;
 	}
-	printf("DEBUG: jsonFile: %s\n", jsonFile);
+	if (stylDebug)
+	{
+		printf("DEBUG: jsonFile: %s\n", jsonFile);
+	}
 
 	/* Read timeoutSec (SEC) from CONFIG_FILE */
 	ret = GetValueFromKey(paramDict, "timeoutSec", tmp);
 	if (ret)
 	{
-		printf("No <timeoutSec> in %s. Using default 10 sec\n", CONFIG_FILE);
+		if (stylDebug)
+		{
+			printf("No <timeoutSec> in %s. Using default 10 sec\n", CONFIG_FILE);
+		}
 		timeoutSec = DEFAULT_TIME_SEC;
 	}
 	else
@@ -116,8 +135,11 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 		printf("ERROR: %s: line %d: wifiSnipper I is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
 		goto EXIT;
 	}
-	sprintf(snippingCmd, "/bin/bash %s > %s", wifiSnipper, jsonFile);
-	printf("DEBUG: snippingCmd: %s\n", snippingCmd);
+	if (stylDebug)
+	{
+		sprintf(snippingCmd, "/bin/bash %s > %s", wifiSnipper, jsonFile);
+		printf("DEBUG: snippingCmd: %s\n", snippingCmd);
+	}
 	system(snippingCmd);
 
 	/* Response information. */
@@ -135,6 +157,10 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	/* Read WiFi neighbors from stylagps.json */
 	memset(jsonString, '\0', JSON_BUFFER);
 	ReadFile(jsonFile, jsonString);
+	if (NULL == jsonString)
+	{
+		printf("ERROR: %s: %d: jsonString is NULL. Please check %s\n", __func__, __LINE__, snippingCmd);
+	}
 	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonString);
 
 	/* Don't bother trying IPv6, which would increase DNS resolution time. */
@@ -173,7 +199,6 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	{
 		printf("Couldn't GET from %s  - exiting\n", url);
 		ret = EXIT_FAILURE;
-		return ret;
 	}
 
 EXIT:
@@ -187,6 +212,8 @@ static int ReadFile(const char* fileName, char *buffer)
 	int fd = 0;
 	struct stat fdStat;
 	void *fmap = NULL;
+
+	assert( (fileName != NULL) && (buffer != NULL) );
 
 	fd = open(fileName, O_RDONLY);
 	if (fd <= 0)
@@ -223,6 +250,8 @@ EXIT:
 static int CallBackWrite(void* buffer, size_t len, size_t size, void* userData) {
 	size_t sLen;
 
+	assert( (buffer != NULL) && (userData != NULL)  );
+
 	if (len * size > 0)
 	{
 		sLen = strnlen((char *)userData, (size_t) JSON_BUFFER);
@@ -240,6 +269,8 @@ static void ExportLocation(char *httpData, double *longitude, double *latitude, 
 	struct json_object *base_t = json_object_new_object();
 	struct json_tokener *tok = json_tokener_new();
 	int jerr = 0;
+
+	assert( (httpData != NULL) && (longitude != NULL) && (latitude != NULL) && (accuracy != NULL) );
 
 	if (NULL != stylDebug)
 	{
@@ -285,9 +316,11 @@ static int ParseConfig(char *buffer, const int bufferLen, node_t *paramDict )
 	int paramCount = 0;
 	int pos = 0;
 
+	assert( (buffer != NULL) && (paramDict != NULL) );
+
 	if (NULL == buffer)
 	{
-		printf("ERROR: parse buffer is null\n");
+		printf("ERROR: config content is null. Please check %s\n", CONFIG_FILE);
 		goto EXIT;
 	}
 
@@ -323,6 +356,7 @@ EXIT:
 static int GetValueFromKey(node_t *paramDict, const char* key, char *value)
 {
 	int ret = EXIT_FAILURE;
+	assert( (paramDict != NULL) && (key != NULL) );
 
 	for (int i = 0; i < MAX_PARAM_NODE; i++)
 	{
