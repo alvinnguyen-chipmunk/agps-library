@@ -12,3 +12,10 @@ autom4te.cache/
 build-aux/
 configure
 m4/
+Makefile
+config.status
+examples/.dirstamp
+examples/main.o
+libtool
+stylagps.o
+stylagps_demo
