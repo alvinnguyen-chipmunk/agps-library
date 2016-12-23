@@ -95,9 +95,9 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 		printf("ERROR: %s: line %d: keyAPI is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
 		goto EXIT;
 	}
+	sprintf(url, "%skey=%s", url, keyAPI);
 	if (stylDebug)
 	{
-		sprintf(url, "%skey=%s", url, keyAPI);
 		printf("DEBUG: url: %s\n", url);
 	}
 
@@ -135,9 +135,9 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 		printf("ERROR: %s: line %d: wifiSnipper I is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
 		goto EXIT;
 	}
+	sprintf(snippingCmd, "/bin/bash %s > %s", wifiSnipper, jsonFile);
 	if (stylDebug)
 	{
-		sprintf(snippingCmd, "/bin/bash %s > %s", wifiSnipper, jsonFile);
 		printf("DEBUG: snippingCmd: %s\n", snippingCmd);
 	}
 	system(snippingCmd);
