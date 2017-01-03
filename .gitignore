@@ -12,3 +12,4 @@ autom4te.cache/
 build-aux/
 configure
 m4/
+image/
