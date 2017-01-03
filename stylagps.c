@@ -157,7 +157,7 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	/* Read WiFi neighbors from stylagps.json */
 	memset(jsonString, '\0', JSON_BUFFER);
 	ReadFile(jsonFile, jsonString);
-	if (NULL == jsonString)
+	if ( strnlen(jsonString, sizeof(jsonString)) <= 0)
 	{
 		printf("ERROR: %s: %d: jsonString is NULL. Please check %s\n", __func__, __LINE__, snippingCmd);
 	}
