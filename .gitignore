@@ -13,3 +13,10 @@ build-aux/
 configure
 m4/
 image/
+Makefile
+config.status
+examples/.dirstamp
+examples/main.o
+libtool
+stylagps.o
+stylagps_demo
