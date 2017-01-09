@@ -188,7 +188,10 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	/* Run our HTTP GET command, capture the HTTP response code, and clean up. */
 	curl_easy_perform(curl);
 	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
+
+	/* Free up mem */
 	curl_easy_cleanup(curl);
+	curl_slist_free_all(headers);
 
 	if (httpCode == 200)
 	{
@@ -313,6 +316,13 @@ static void ExportLocation(char *httpData, double *longitude, double *latitude, 
 	{
 		printf("STYL_DEBUG: %s: Lng %f - Lat %f - Acc %f\n", __func__, *longitude, *latitude, *accuracy);
 	}
+
+	json_object_put(base_t);
+	json_object_put(location_t);
+	json_object_put(accuracy_t);
+	json_object_put(longitude_t);
+	json_object_put(latitude_t);
+	json_tokener_free(tok);
 }
 
 static int ParseConfig(char *buffer, const int bufferLen, node_t *paramDict )
