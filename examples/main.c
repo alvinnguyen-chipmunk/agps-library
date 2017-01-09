@@ -12,7 +12,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
 #include "stylagps.h"
+
+static int run = 1;
+
+void HandleSignal(int sig);
 
 int main(int argc, const char * argv[]) {
 
@@ -23,12 +29,30 @@ int main(int argc, const char * argv[]) {
 
 	printf("Version: %s\n", GetVersion());
 
-	ret = StylAgpsGetLocation(&longitude, &latitude, &accuracy);
+	signal(SIGINT, HandleSignal);
 
-	if (EXIT_SUCCESS == ret)
-	{
-		printf("Lng: %f\nLat: %f\nAcc: %f\n", longitude, latitude, accuracy);
-	}
+	unsigned long long i = 0;
+    while(run)
+    {
+        printf("Count: %llu\n", i);
+        ret = StylAgpsGetLocation(&longitude, &latitude, &accuracy);
 
+        if (EXIT_SUCCESS == ret)
+        {
+            printf("Lng: %f\nLat: %f\nAcc: %f\n\n", longitude, latitude, accuracy);
+        }
+
+		i++;
+        sleep(3);
+    }
     return ret;
+}
+
+void HandleSignal(int sig)
+{
+	if (sig == SIGINT)
+	{
+        printf("Stop stylagps_demo. Thank you for using STYL demos!\n");
+		run = 0;
+	}
 }
