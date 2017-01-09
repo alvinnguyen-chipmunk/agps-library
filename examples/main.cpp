@@ -21,6 +21,8 @@ int main(int argc, const char * argv[]) {
 	double accuracy = 0;
 	int ret = 0;
 
+	printf("Version: %s\n", GetVersion());
+
 	ret = StylAgpsGetLocation(&longitude, &latitude, &accuracy);
 
 	if (EXIT_SUCCESS == ret)

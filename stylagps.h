@@ -33,6 +33,7 @@ typedef struct _dict_node {
 } node_t;
 
 int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy);
+char *GetVersion(void);
 
 #ifdef __cplusplus
 }

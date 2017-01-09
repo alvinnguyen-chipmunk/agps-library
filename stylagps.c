@@ -29,6 +29,10 @@ extern "C"
 #include <string.h>
 #include <assert.h>
 
+#ifndef STYL_SW_VERSION
+#define STYL_SW_VERSION     "1.0"
+#endif
+
 static int CallBackWrite(void* buf, size_t len, size_t size, void* userdata);
 static void ExportLocation(char *httpData, double *longitude, double *latitude, double *accuracy);
 static int ParseConfig(char *buffer, const int bufferLen, node_t *paramDict);
@@ -370,6 +374,11 @@ static int GetValueFromKey(node_t *paramDict, const char* key, char *value)
 
 EXIT:
 	return ret;
+}
+
+char *GetVersion(void)
+{
+	return STYL_SW_VERSION;
 }
 
 #ifdef __cplusplus
