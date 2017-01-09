@@ -7,7 +7,7 @@ include_HEADERS = stylagps.h
 
 # Reference application
 bin_PROGRAMS = stylagps_demo
-stylagps_demo_SOURCES = examples/main.cpp
+stylagps_demo_SOURCES = examples/main.c
 stylagps_demo_LDADD = libstylagps.la
 
 extradir = /etc/stylagps
