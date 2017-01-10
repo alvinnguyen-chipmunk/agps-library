@@ -273,7 +273,7 @@ static void ExportLocation(char *httpData, double *longitude, double *latitude, 
 {
 	char *stylDebug = getenv("STYL_DEBUG");
 	size_t httpDataLen = 0;
-	struct json_object *base_t = json_object_new_object();
+	struct json_object *base_t;
 	struct json_tokener *tok = json_tokener_new();
 	int jerr = 0;
 
@@ -295,13 +295,17 @@ static void ExportLocation(char *httpData, double *longitude, double *latitude, 
 	if (json_tokener_success != jerr)
 	{
 		printf("ERROR: %s: parse failed\n", __func__);
-		return;
+		goto EXIT;
+	}
+	else
+	{
+		json_tokener_free(tok);
 	}
 
-	struct json_object *location_t = json_object_new_object();
-	struct json_object *accuracy_t = json_object_new_object();
-	struct json_object *longitude_t = json_object_new_object();
-	struct json_object *latitude_t = json_object_new_object();
+	struct json_object *location_t;
+	struct json_object *accuracy_t;
+	struct json_object *longitude_t;
+	struct json_object *latitude_t;
 
 	json_object_object_get_ex(base_t, "location", &location_t);
 	json_object_object_get_ex(base_t, "accuracy", &accuracy_t);
@@ -312,17 +316,19 @@ static void ExportLocation(char *httpData, double *longitude, double *latitude, 
 	*latitude = json_object_get_double(latitude_t);
 	*accuracy = json_object_get_double(accuracy_t);
 
+	json_object_put(location_t);
+	json_object_put(accuracy_t);
+	json_object_put(longitude_t);
+	json_object_put(latitude_t);
+
 	if (NULL != stylDebug)
 	{
 		printf("STYL_DEBUG: %s: Lng %f - Lat %f - Acc %f\n", __func__, *longitude, *latitude, *accuracy);
 	}
 
+EXIT:
 	json_object_put(base_t);
-	json_object_put(location_t);
-	json_object_put(accuracy_t);
-	json_object_put(longitude_t);
-	json_object_put(latitude_t);
-	json_tokener_free(tok);
+	return;
 }
 
 static int ParseConfig(char *buffer, const int bufferLen, node_t *paramDict )
