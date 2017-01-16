@@ -179,6 +179,12 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	/* Hook up data handling function. */
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CallBackWrite);
 
+	/* force a new connection to be used */
+	curl_easy_setopt(curl, CURLOPT_FRESH_CONNECT, 1);
+
+	/* make connection get closed at once after use  */
+	curl_easy_setopt(curl, CURLOPT_FORBID_REUSE, 1);
+
 	/* Hook up data container (will be passed as the last parameter to the
 	 * callback handling function).  Can be any pointer type, since it will
 	 * internally be passed as a void pointer.
