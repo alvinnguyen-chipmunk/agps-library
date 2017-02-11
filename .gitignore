@@ -6,6 +6,7 @@
 *.la*
 .deps*
 .libs*
+*.o
 Makefile.in
 aclocal.m4
 autom4te.cache/
@@ -21,3 +22,4 @@ libtool
 stylagps.o
 stylagps_demo
 tags
+*libtool

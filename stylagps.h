@@ -17,7 +17,7 @@
 #define PARAM_LEN				(255 + 1)		// Supported path name + 1 terminator char
 #define BUFFER_LEN				( ( (PARAM_LEN) * 2) * MAX_PARAM_NODE )	// each node has 1 value and 1 key
 #define URL_LEN					2083
-#define JSON_BUFFER				100000
+#define JSON_BUFFER_LEN				10000
 #define DEFAULT_TIME_SEC		10
 #define CONFIG_FILE				"/etc/stylagps/stylagps.conf"
 #define GOOGLE_GEOLOCATION_URL	"https://www.googleapis.com/geolocation/v1/geolocate?"

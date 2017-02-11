@@ -16,6 +16,7 @@ extern "C"
 #endif /* __cplusplus */
 
 #include "stylagps.h"
+#include "get-ap-info-libnm.h"
 
 #include <curl/curl.h>
 #include <json-c/json.h>
@@ -42,12 +43,9 @@ static int ReadFile(const char* fileName, char *buffer);
 int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 {
 	char url[URL_LEN];
-	char jsonFile[PARAM_LEN];
-	char jsonString[JSON_BUFFER];
-	char httpData[JSON_BUFFER];
+	char jsonString[JSON_BUFFER_LEN];
+	char httpData[JSON_BUFFER_LEN];
 	char keyAPI[PARAM_LEN];
-	char wifiSnipper[PARAM_LEN];
-	char snippingCmd[PARAM_LEN * 2 + 20];		// "/bin/bash ${wifiSnipper} > ${jsonFile}"
 	char *stylDebug = getenv("STYL_DEBUG");
 	char confBuffer[BUFFER_LEN];
 	char tmp[PARAM_LEN];	// to be used to read non-char key
@@ -57,13 +55,9 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 
 	/* Initialize all arrays */
 	memset(url, '\0', sizeof(url));
-	memset(jsonFile, '\0', sizeof(jsonFile));
-	memset(jsonString, '\0', sizeof(jsonString));
 	memset(httpData, '\0', sizeof(httpData));
 	memset(keyAPI, '\0', sizeof(keyAPI));
 	memset(confBuffer, '\0', sizeof(confBuffer));
-	memset(snippingCmd, '\0', sizeof(snippingCmd));
-	memset(wifiSnipper, '\0', sizeof(wifiSnipper));
 
 	/* Read stylagps.conf */
 	ret = ReadFile(CONFIG_FILE, confBuffer);
@@ -105,18 +99,6 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 		printf("DEBUG: url: %s\n", url);
 	}
 
-	/* Read jsonFile path from CONFIG_FILE */
-	ret = GetValueFromKey(paramDict, "jsonFile", jsonFile);
-	if (ret)
-	{
-		printf("ERROR: %s: line %d: jsonFile I is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
-		goto EXIT;
-	}
-	if (stylDebug)
-	{
-		printf("DEBUG: jsonFile: %s\n", jsonFile);
-	}
-
 	/* Read timeoutSec (SEC) from CONFIG_FILE */
 	ret = GetValueFromKey(paramDict, "timeoutSec", tmp);
 	if (ret)
@@ -132,20 +114,6 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 		timeoutSec = (unsigned int)atoi(tmp);
 	}
 
-	/* Read WiFi snipper path from CONFIG_FILE */
-	ret = GetValueFromKey(paramDict, "wifiSnipper", wifiSnipper);
-	if (ret)
-	{
-		printf("ERROR: %s: line %d: wifiSnipper I is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
-		goto EXIT;
-	}
-	sprintf(snippingCmd, "/bin/bash %s > %s", wifiSnipper, jsonFile);
-	if (stylDebug)
-	{
-		printf("DEBUG: snippingCmd: %s\n", snippingCmd);
-	}
-	system(snippingCmd);
-
 	/* Response information. */
 	int httpCode = 0;
 
@@ -159,12 +127,13 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
 	/* Read WiFi neighbors from stylagps.json */
-	memset(jsonString, '\0', JSON_BUFFER);
-	ReadFile(jsonFile, jsonString);
-	if ( strnlen(jsonString, sizeof(jsonString)) <= 0)
-	{
-		printf("ERROR: %s: %d: jsonString is NULL. Please check %s\n", __func__, __LINE__, snippingCmd);
-	}
+	memset(jsonString, '\0', sizeof(jsonString));
+        ret = create_json_string_list_AP(jsonString, sizeof(jsonString));
+        if (ret)
+        {
+                goto EXIT;
+        }
+
 	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonString);
 
 	/* Don't bother trying IPv6, which would increase DNS resolution time. */
@@ -215,7 +184,6 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	}
 
 EXIT:
-	remove(jsonFile);
 	return ret;
 }
 
@@ -253,9 +221,9 @@ static int ReadFile(const char* fileName, char *buffer)
 	}
 
 	memcpy(buffer, fmap, fdStat.st_size);
-	
+
 	close(fd);
-	
+
 EXIT:
 	return ret;
 }
@@ -267,7 +235,7 @@ static int CallBackWrite(void* buffer, size_t len, size_t size, void* userData) 
 
 	if (len * size > 0)
 	{
-		sLen = strnlen((char *)userData, (size_t) JSON_BUFFER);
+		sLen = strnlen((char *)userData, (size_t) JSON_BUFFER_LEN);
 
 		strncpy(&((char*)userData)[sLen], (char*)buffer, (len * size));
 	}
@@ -292,7 +260,7 @@ static void ExportLocation(char *httpData, double *longitude, double *latitude, 
 
 	do
 	{
-		httpDataLen = strnlen(httpData, (size_t) JSON_BUFFER);
+		httpDataLen = strnlen(httpData, (size_t) JSON_BUFFER_LEN);
 		base_t = json_tokener_parse_ex(tok, httpData, (int) httpDataLen);
 		jerr = json_tokener_get_error(tok);
 	}
@@ -372,9 +340,9 @@ static int ParseConfig(char *buffer, const int bufferLen, node_t *paramDict )
 			default:
 				break;
 		}
-		
+
 	}
-	
+
 EXIT:
 	return paramCount;
 }
