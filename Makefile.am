@@ -11,5 +11,4 @@ stylagps_demo_SOURCES = examples/main.c
 stylagps_demo_LDADD = libstylagps.la
 
 extradir = /etc/stylagps
-extra_DATA = stylagps.conf scripts/SnipWireless.sh
-
+extra_DATA = stylagps.conf
