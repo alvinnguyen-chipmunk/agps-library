@@ -292,11 +292,6 @@ static void ExportLocation(char *httpData, double *longitude, double *latitude, 
 	*latitude = json_object_get_double(latitude_t);
 	*accuracy = json_object_get_double(accuracy_t);
 
-	json_object_put(location_t);
-	json_object_put(accuracy_t);
-	json_object_put(longitude_t);
-	json_object_put(latitude_t);
-
 	if (NULL != stylDebug)
 	{
 		printf("STYL_DEBUG: %s: Lng %f - Lat %f - Acc %f\n", __func__, *longitude, *latitude, *accuracy);
