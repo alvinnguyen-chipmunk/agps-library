@@ -93,7 +93,9 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 		printf("ERROR: %s: line %d: keyAPI is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
 		goto EXIT;
 	}
-	sprintf(url, "%skey=%s", url, keyAPI);
+        memcpy(&url[strlen(url)], "key=", 4);
+        memcpy(&url[strlen(url)], keyAPI, strlen(keyAPI));
+
 	if (stylDebug)
 	{
 		printf("DEBUG: url: %s\n", url);
