@@ -179,7 +179,7 @@ int CreateJsonStringListAP(char *jsonString, int jsonStringLen)
                 printf("jsonString:\n%s\n", jsonString);
         }
 
-        g_object_unref(client);
 EXIT:
+        g_object_unref(client);
         return ret;
 }
