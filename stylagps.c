@@ -132,7 +132,7 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 
 	/* Read WiFi neighbors from stylagps.json */
 	memset(jsonString, '\0', sizeof(jsonString));
-        ret = create_json_string_list_AP(jsonString, sizeof(jsonString));
+        ret = CreateJsonStringListAP(jsonString, sizeof(jsonString));
         if (ret)
         {
                 goto EXIT;
