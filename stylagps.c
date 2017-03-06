@@ -16,7 +16,7 @@ extern "C"
 #endif /* __cplusplus */
 
 #include "stylagps.h"
-#include "get-ap-info-libnm.h"
+#include "stylAgpsUtils.h"
 
 #include <curl/curl.h>
 #include <json-c/json.h>
