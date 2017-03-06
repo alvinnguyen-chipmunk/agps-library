@@ -52,6 +52,7 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	node_t paramDict[MAX_PARAM_NODE];
 	int ret = EXIT_SUCCESS;
 	unsigned int timeoutSec = DEFAULT_TIME_SEC;
+	CURL* curl;
 
 	/* Initialize all arrays */
 	memset(url, '\0', sizeof(url));
@@ -119,7 +120,8 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	/* Response information. */
 	int httpCode = 0;
 
-	CURL* curl = curl_easy_init();
+	curl_global_init(CURL_GLOBAL_ALL);
+	curl = curl_easy_init();
 
 	/* Set remote URL. */
 	curl_easy_setopt(curl, CURLOPT_URL, url);
@@ -130,7 +132,7 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 
 	/* Read WiFi neighbors from stylagps.json */
 	memset(jsonString, '\0', sizeof(jsonString));
-        ret = create_json_string_list_AP(jsonString, sizeof(jsonString));
+        ret = CreateJsonStringListAP(jsonString, sizeof(jsonString));
         if (ret)
         {
                 goto EXIT;
@@ -167,8 +169,9 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
 
 	/* Free up mem */
-	curl_easy_cleanup(curl);
 	curl_slist_free_all(headers);
+	curl_easy_cleanup(curl);
+	curl_global_cleanup();
 
 	if (httpCode == 200)
 	{
@@ -208,25 +211,29 @@ static int ReadFile(const char* fileName, char *buffer)
 	ret = fstat(fd, &fdStat);
 	if (ret)
 	{
-		perror("STAT");
+		perror("fstat");
 		ret = EXIT_FAILURE;
 		goto EXIT;
 	}
 
-	/* Read json file into memory */
 	fmap = mmap(NULL, fdStat.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
 	if (NULL == fmap)
 	{
-		perror("MMAP");
+		perror("mmap");
 		ret = EXIT_FAILURE;
 		goto EXIT;
 	}
 
 	memcpy(buffer, fmap, fdStat.st_size);
-
-	close(fd);
-
+	ret = munmap(fmap, fdStat.st_size);
+	if (ret)
+	{
+		perror("munmap");
+		ret = EXIT_FAILURE;
+		goto EXIT;
+	}
 EXIT:
+	close(fd);
 	return ret;
 }
 

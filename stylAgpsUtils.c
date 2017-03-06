@@ -75,7 +75,7 @@ static NMDevice *get_wifi_device()
         return device;
 }
 
-int create_json_string_list_AP(char *jsonString, int jsonStringLen)
+int CreateJsonStringListAP(char *jsonString, int jsonStringLen)
 {
         const GPtrArray *apArr;
         const GPtrArray *deviceArr;
@@ -179,7 +179,7 @@ int create_json_string_list_AP(char *jsonString, int jsonStringLen)
                 printf("jsonString:\n%s\n", jsonString);
         }
 
-        g_object_unref(client);
 EXIT:
+        g_object_unref(client);
         return ret;
 }
