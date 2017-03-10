@@ -31,7 +31,7 @@
 #include <string.h>
 
 #include <NetworkManager.h>
-#include "get-ap-info-libnm.h"
+#include "stylAgpsUtils.h"
 
 static int strength_to_dbm(int strength)
 {
