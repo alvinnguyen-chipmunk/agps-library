@@ -5,7 +5,12 @@ BUILD=${PWD}
 
 if [[ ! ${ARCH} = "arm" || -z ${ARCH} ]]; then
 	printf "\e[31mERROR: please initialize poky SDK first\e[0m\n"
-#	exit -1
+	exit -1
+fi
+
+if [ -e ${TARGET} ]; then
+	rm ${TARGET}
+	rm -rf image
 fi
 
 ./autogen.sh
