@@ -6,9 +6,13 @@ libstylagps_la_SOURCES = stylagps.c stylAgpsUtils.c
 include_HEADERS = stylagps.h stylAgpsUtils.h
 
 # Reference application
-bin_PROGRAMS = stylagps_demo
+bin_PROGRAMS = stylagps_demo stylagps_send stylagps_receive
 stylagps_demo_SOURCES = examples/main.c
 stylagps_demo_LDADD = libstylagps.la
+stylagps_send_SOURCES = examples/stylAgpsSend.c
+stylagps_send_LDADD = libstylagps.la
+stylagps_receive_SOURCES = examples/stylAgpsReceive.c
+stylagps_receive_LDADD = libstylagps.la
 
 extradir = /etc/stylagps
 extra_DATA = stylagps.conf

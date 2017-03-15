@@ -21,6 +21,7 @@
 #define DEFAULT_TIME_SEC		10
 #define CONFIG_FILE				"/etc/stylagps/stylagps.conf"
 #define GOOGLE_GEOLOCATION_URL	"https://www.googleapis.com/geolocation/v1/geolocate?"
+#define AGPS_DATA_FILE  "/tmp/stylagps.data"
 
 #ifdef __cplusplus
 extern "C"

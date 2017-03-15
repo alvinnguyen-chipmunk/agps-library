@@ -20,6 +20,8 @@ examples/.dirstamp
 examples/main.o
 libtool
 stylagps.o
-stylagps_demo
 tags
 *libtool
+stylagps_demo
+stylagps_send
+stylagps_receive
