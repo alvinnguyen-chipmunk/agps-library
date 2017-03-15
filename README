@@ -43,3 +43,19 @@ stylagps_receive (source example/stylAgpsReceive.c):
 	Read data from AGPS_DATA_FILE (default is /tmp/stylagps.data).
 	To avoid race condition, AGPS_DATA_FILE is deleted after reading to allow sender do update.
 	Terminate process by hitting Ctrl-C
+
+UPDATE PACKAGES
+
+	Update packages are usually provided in tarball named after stylagps_<feature/version>.tar.xz
+	To deploy this packages, please:
+
+	mkdir stylagps
+	tar xf stylagps_<feature/version>.tar.xz -C stylagps
+	cp -r stylagps/etc /
+	cp -r stylagps/usr /	OR	{cp -r stylagps/lib /usr & cp -r stylagps/bin /usr}
+
+HEADERS
+	
+	stylagps.h
+
+	NOTE: you may want to copy header into ${BUILD_SYSROOT}/usr/include
