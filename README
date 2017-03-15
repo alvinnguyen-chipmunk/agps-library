@@ -12,3 +12,34 @@ source <location of extracted SDK>/poky/2.1.1/environment-setup-cortexa9hf-neon-
 # Configure package
 ./configure --host=arm-poky-linux-gnueabi --prefix=${PWD}/image
 make -j4
+
+EXAMPLES
+
+stylagps_demo (source example/main.c):
+
+	An infinite loop runs to queries AGPS location via libstylagps API.
+	Output result to stdout.
+	Terminate process by hitting Ctrl-C
+
+stylagps_send (source example/stylAgpsSend.c):
+
+	Query AGPS location data and write to file to share with other processes.
+	IPC Concept: Write then wait until file is deleted by receiver.
+
+	An infinite loop runs to queries AGPS location via libstylagps API.
+	Output result to stdout with prefix "SEND".
+	Write data to AGPS_DATA_FILE (default is /tmp/stylagps.data).
+	To avoid race condition, AGPS_DATA_FILE is not updated until it deleted by reader.
+	Terminate process by hitting Ctrl-C
+
+
+stylagps_receive (source example/stylAgpsReceive.c):
+
+	Receive AGPS location from AGPS_DATA_FILE which is feeded by stylagps_send.
+	IPC Concept: Read then delete to allow sender to update.
+
+	An infinite loop runs to queries AGPS location via libstylagps API.
+	Output result to stdout with prefix "RECEIVE".
+	Read data from AGPS_DATA_FILE (default is /tmp/stylagps.data).
+	To avoid race condition, AGPS_DATA_FILE is deleted after reading to allow sender do update.
+	Terminate process by hitting Ctrl-C
