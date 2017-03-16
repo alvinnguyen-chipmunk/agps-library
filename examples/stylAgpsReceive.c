@@ -49,7 +49,7 @@ int main(int argc, const char * argv[]) {
 
 			printf("RECEIVE [Lng: %f\tLat: %f\tAcc: %f]\n", longitude, latitude, accuracy);
 		}
-                sleep(3);
+                usleep(3000);
 	}
 
         return ret;
