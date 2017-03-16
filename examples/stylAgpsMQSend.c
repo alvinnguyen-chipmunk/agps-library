@@ -33,12 +33,13 @@ int main(int argc, const char * argv[]) {
         double accuracy = 0;
         int ret = 0;
 	int fd = 0;
+	int msgLength = 0;
 	mqd_t mq;
 	char buffer[MAX_SIZE];
         
-	mq = mq_open(QUEUE_NAME, O_WRONLY);
+	mq = mq_open(AGPS_QUEUE_NAME, O_WRONLY);
 	CHECK((mqd_t)-1 != mq);
-        memset(buffer, 0, MAX_SIZE);
+        memset(buffer, '\0', MAX_SIZE);
 
         printf("Version: %s\n", GetVersion());
         
@@ -50,11 +51,13 @@ int main(int argc, const char * argv[]) {
 		ret = StylAgpsGetLocation(&longitude, &latitude, &accuracy);
 		if (EXIT_SUCCESS == ret)
 		{
-			sprintf(buffer, "%f %f %f", longitude, latitude, accuracy);
-			CHECK(0 <= mq_send(mq, buffer, MAX_SIZE, 0));
+			sprintf(buffer, "%lf %lf %lf", longitude, latitude, accuracy);
+			msgLength = strnlen(buffer, MAX_SIZE);
+			mq_send(mq, buffer, msgLength, 0);
 			printf("stylAgpsMQSend (Lng Lat Acc): %s\n", buffer);
+			memset(buffer, '\0', msgLength);
 		}
-                usleep(3000);
+                usleep(3000000);
         }
 
 	CHECK((mqd_t)-1 != mq_close(mq));

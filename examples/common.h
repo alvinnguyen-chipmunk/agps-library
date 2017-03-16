@@ -5,7 +5,7 @@
 #define MAX_SIZE    1024
 #define MSG_STOP    "exit"
 
-#define AGPS_QUEUE_NAME  "/tmp/stylagps.mqueue"
+#define AGPS_QUEUE_NAME  "/stylagps_queue"
 
 #define CHECK(x) \
     do { \

@@ -52,7 +52,7 @@ int main(int argc, const char * argv[]) {
 
 			close(fd);
 		}
-                usleep(3000);
+                usleep(3000000);
         }
 
         return ret;

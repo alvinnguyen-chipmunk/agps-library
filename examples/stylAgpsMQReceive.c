@@ -19,7 +19,6 @@
 #include <sys/types.h>
 #include <mqueue.h>
 #include <string.h>
-#include "stylagps.h"
 #include "common.h"
 
 static int run = 1;
@@ -32,22 +31,24 @@ int main(int argc, const char * argv[]) {
         double latitude = 0;
         double accuracy = 0;
         int ret = 0;
+	int fd = 0;
 	mqd_t mq;
 	struct mq_attr attr;
 	char buffer[MAX_SIZE];
         ssize_t bytes_read;
-        
+	mode_t omask;
+
+	omask = umask(0);
+
 	attr.mq_flags = 0;
 	attr.mq_maxmsg = 10;
 	attr.mq_msgsize = MAX_SIZE;
 	attr.mq_curmsgs = 0;
 
-	mq = mq_open(AGPS_QUEUE_NAME, O_CREAT | O_RDONLY, 0644, &attr);
+	mq = mq_open(AGPS_QUEUE_NAME, O_CREAT | O_RDONLY | O_NOCTTY | O_SYNC, 0777, &attr);
 	CHECK((mqd_t)-1 != mq);
         memset(buffer, '\0', MAX_SIZE);
 
-        printf("Version: %s\n", GetVersion());
-        
         signal(SIGINT, HandleSignal);
 
         while(run)
@@ -55,16 +56,17 @@ int main(int argc, const char * argv[]) {
 		bytes_read = mq_receive(mq, buffer, MAX_SIZE, NULL);
 		if (bytes_read > 0)
 		{
-			sscanf(buffer, "%f %f %f", &longitude, &latitude, &accuracy);
-			printf("RECEIVE from %s: Lng: %f - Lat: %f - Acc: %f\n", AGPS_QUEUE_NAME, longitude, latitude, accuracy);
+			sscanf(buffer, "%lf %lf %lf", &longitude, &latitude, &accuracy);
+			printf("RECEIVED: Lng: %f - Lat: %f - Acc: %f\n", AGPS_QUEUE_NAME, longitude, latitude, accuracy);
 			memset(buffer, '\0', MAX_SIZE);
 		}
 
-		usleep(3000);
+		usleep(3000000);
         }
 
 	CHECK((mqd_t)-1 != mq_close(mq));
-	CHECK((mqd_t)-1 != mq_unlink(QUEUE_NAME));
+	CHECK((mqd_t)-1 != mq_unlink(AGPS_QUEUE_NAME));
+	umask(omask);
 
         return ret;
 }
