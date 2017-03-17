@@ -75,7 +75,7 @@ int main(int argc, const char * argv[]) {
 	else
 	{
 		updateFrequency = atoi(tmp);
-		printf("Using update frequency of %d in %s:", updateFrequency, CONFIG_FILE);
+		printf("Using update frequency of %d in %s\n", updateFrequency, CONFIG_FILE);
 	}
 
 SKIP_CONFIG:
