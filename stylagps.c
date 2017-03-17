@@ -73,10 +73,11 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	}
 
 	/* Read Geo Location URL from CONFIG_FILE */
-	ret = GetValueFromKey(paramDict, "agpsUpdateFrequencySec", url);
+	ret = GetValueFromKey(paramDict, "geoLocationURL", url);
 	if (ret)
 	{
-		printf("UpdateFrequencySec is not found in %s. Using default frequency of 3s\n", __func__, __LINE__, CONFIG_FILE);
+		printf("ERROR: %s: line %d: geoLocationURL is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
+		goto EXIT;
 	}
 	if (stylDebug)
 	{
