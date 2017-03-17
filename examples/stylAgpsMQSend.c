@@ -40,7 +40,7 @@ int main(int argc, const char * argv[]) {
 	char buffer[MAX_SIZE];
         char confBuffer[BUFFER_LEN];
         node_t paramDict[MAX_PARAM_NODE];
-        useconds_t updateFrequency = 0;
+        unsigned long updateFrequency = 0;
         
 	mq = mq_open(AGPS_QUEUE_NAME, O_WRONLY);
 	CHECK((mqd_t)-1 != mq);
@@ -53,14 +53,14 @@ int main(int argc, const char * argv[]) {
         if (ret)
         {
                 printf("ERROR: %s: line %d\n", __func__, __LINE__);
-                goto EXIT;
+		goto SKIP_CONFIG;
         }
 
         ret = ParseConfig(confBuffer, sizeof(confBuffer), paramDict);
         if (ret <= 0)
         {
                 printf("ERROR: No param found. Please check /etc/stylagps/stylagps.conf");
-                goto EXIT;
+		goto SKIP_CONFIG;
         }
 
         /* Read usec of update frequency from CONFIG_FILE */
@@ -68,8 +68,10 @@ int main(int argc, const char * argv[]) {
         if (ret)
         {
                 printf("agpsUpdateFrequencySec is not found in %s. Using default frequency of 3s\n", CONFIG_FILE);
-                useconds_t updateFrequency = DEFAULT_UPDATE_FREQUENCY_USEC;
+                updateFrequency = DEFAULT_UPDATE_FREQUENCY_USEC;
         }
+
+SKIP_CONFIG:
 
         signal(SIGINT, HandleSignal);
         while(run)
