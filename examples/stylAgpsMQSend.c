@@ -64,7 +64,7 @@ int main(int argc, const char * argv[]) {
         }
 
         /* Read usec of update frequency from CONFIG_FILE */
-        ret = GetValueFromKey(paramDict, "agpsUpdateFrequencySec", &updateFrequency);
+        ret = GetValueFromKey(paramDict, "agpsUpdateFrequencyUSec", &updateFrequency);
         if (ret)
         {
                 printf("agpsUpdateFrequencySec is not found in %s. Using default frequency of 3s\n", CONFIG_FILE);
