@@ -59,3 +59,14 @@ HEADERS
 	stylagps.h
 
 	NOTE: you may want to copy header into ${BUILD_SYSROOT}/usr/include
+
+CONFIGURATION
+
+	Behavior of libstylagps and some examples can be configured via /etc/stylagps/stylagps.conf
+
+	- keyAPI: key API of Google Geolocation to be authorized to query Google API
+	- geoLocationURL: link to access Google API
+	- googleRequestTimeoutSec: timeout of Google API request.
+	  Please adjust this to be complied with your internet connection speed.
+	- agpsUpdateFrequencyUSec: used in stylagps_mqSend (resolution usec) to configure update frequency.
+
