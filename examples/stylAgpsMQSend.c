@@ -39,12 +39,14 @@ int main(int argc, const char * argv[]) {
 	mqd_t mq;
 	char buffer[MAX_SIZE];
         char confBuffer[BUFFER_LEN];
+	char tmp[20];
         node_t paramDict[MAX_PARAM_NODE];
         unsigned long updateFrequency = 0;
         
 	mq = mq_open(AGPS_QUEUE_NAME, O_WRONLY);
 	CHECK((mqd_t)-1 != mq);
-        memset(buffer, '\0', MAX_SIZE);
+        memset(buffer, '\0', sizeof(buffer));
+        memset(tmp, '\0', sizeof(tmp));
 
         printf("Version: %s\n", GetVersion());
 
@@ -64,12 +66,17 @@ int main(int argc, const char * argv[]) {
         }
 
         /* Read usec of update frequency from CONFIG_FILE */
-        ret = GetValueFromKey(paramDict, "agpsUpdateFrequencyUSec", &updateFrequency);
+        ret = GetValueFromKey(paramDict, "agpsUpdateFrequencyUSec", tmp);
         if (ret)
         {
                 printf("agpsUpdateFrequencyUSec is not found in %s. Using default frequency of 3s\n", CONFIG_FILE);
                 updateFrequency = DEFAULT_UPDATE_FREQUENCY_USEC;
         }
+	else
+	{
+		updateFrequency = atoi(tmp);
+		printf("Using update frequency of %d in %s:", updateFrequency, CONFIG_FILE);
+	}
 
 SKIP_CONFIG:
 
