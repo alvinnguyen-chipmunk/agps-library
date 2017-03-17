@@ -36,9 +36,6 @@ extern "C"
 
 static int CallBackWrite(void* buf, size_t len, size_t size, void* userdata);
 static void ExportLocation(char *httpData, double *longitude, double *latitude, double *accuracy);
-static int ParseConfig(char *buffer, const int bufferLen, node_t *paramDict);
-static int GetValueFromKey(node_t *paramDict, const char* key, char *value);
-static int ReadFile(const char* fileName, char *buffer);
 
 int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 {
@@ -76,11 +73,10 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	}
 
 	/* Read Geo Location URL from CONFIG_FILE */
-	ret = GetValueFromKey(paramDict, "geoLocationURL", url);
+	ret = GetValueFromKey(paramDict, "agpsUpdateFrequencySec", url);
 	if (ret)
 	{
-		printf("ERROR: %s: line %d: geoLocationURL is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
-		goto EXIT;
+		printf("UpdateFrequencySec is not found in %s. Using default frequency of 3s\n", __func__, __LINE__, CONFIG_FILE);
 	}
 	if (stylDebug)
 	{
@@ -94,8 +90,8 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 		printf("ERROR: %s: line %d: keyAPI is not found in %s\n", __func__, __LINE__, CONFIG_FILE);
 		goto EXIT;
 	}
-        memcpy(&url[strlen(url)], "key=", 4);
-        memcpy(&url[strlen(url)], keyAPI, strlen(keyAPI));
+	memcpy(&url[strlen(url)], "key=", 4);
+	memcpy(&url[strlen(url)], keyAPI, strlen(keyAPI));
 
 	if (stylDebug)
 	{
@@ -103,7 +99,7 @@ int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy)
 	}
 
 	/* Read timeoutSec (SEC) from CONFIG_FILE */
-	ret = GetValueFromKey(paramDict, "timeoutSec", tmp);
+	ret = GetValueFromKey(paramDict, "googleRequestTimeoutSec", tmp);
 	if (ret)
 	{
 		if (stylDebug)
@@ -192,7 +188,7 @@ EXIT:
 	return ret;
 }
 
-static int ReadFile(const char* fileName, char *buffer)
+int ReadFile(const char* fileName, char *buffer)
 {
 	int ret = EXIT_SUCCESS;
 	int fd = 0;
@@ -309,7 +305,7 @@ EXIT:
 	return;
 }
 
-static int ParseConfig(char *buffer, const int bufferLen, node_t *paramDict )
+int ParseConfig(char *buffer, const int bufferLen, node_t *paramDict )
 {
 	int paramCount = 0;
 	int pos = 0;
@@ -351,7 +347,7 @@ EXIT:
 	return paramCount;
 }
 
-static int GetValueFromKey(node_t *paramDict, const char* key, char *value)
+int GetValueFromKey(node_t *paramDict, const char* key, char *value)
 {
 	int ret = EXIT_FAILURE;
 	assert( (paramDict != NULL) && (key != NULL) );

@@ -22,6 +22,8 @@
 #include "stylagps.h"
 #include "common.h"
 
+#define DEFAULT_UPDATE_FREQUENCY_USEC        3000000
+
 static int run = 1;
 
 void HandleSignal(int sig);
@@ -36,15 +38,40 @@ int main(int argc, const char * argv[]) {
 	int msgLength = 0;
 	mqd_t mq;
 	char buffer[MAX_SIZE];
+        char confBuffer[BUFFER_LEN];
+        node_t paramDict[MAX_PARAM_NODE];
+        useconds_t updateFrequency = 0;
         
 	mq = mq_open(AGPS_QUEUE_NAME, O_WRONLY);
 	CHECK((mqd_t)-1 != mq);
         memset(buffer, '\0', MAX_SIZE);
 
         printf("Version: %s\n", GetVersion());
-        
-        signal(SIGINT, HandleSignal);
 
+        /* Read stylagps.conf */
+        ret = ReadFile(CONFIG_FILE, confBuffer);
+        if (ret)
+        {
+                printf("ERROR: %s: line %d\n", __func__, __LINE__);
+                goto EXIT;
+        }
+
+        ret = ParseConfig(confBuffer, sizeof(confBuffer), paramDict);
+        if (ret <= 0)
+        {
+                printf("ERROR: No param found. Please check /etc/stylagps/stylagps.conf");
+                goto EXIT;
+        }
+
+        /* Read usec of update frequency from CONFIG_FILE */
+        ret = GetValueFromKey(paramDict, "agpsUpdateFrequencySec", &updateFrequency);
+        if (ret)
+        {
+                printf("agpsUpdateFrequencySec is not found in %s. Using default frequency of 3s\n", CONFIG_FILE);
+                useconds_t updateFrequency = DEFAULT_UPDATE_FREQUENCY_USEC;
+        }
+
+        signal(SIGINT, HandleSignal);
         while(run)
         {
                 
@@ -57,7 +84,7 @@ int main(int argc, const char * argv[]) {
 			printf("stylAgpsMQSend (Lng Lat Acc): %s\n", buffer);
 			memset(buffer, '\0', msgLength);
 		}
-                usleep(3000000);
+                usleep(updateFrequency);
         }
 
 	CHECK((mqd_t)-1 != mq_close(mq));

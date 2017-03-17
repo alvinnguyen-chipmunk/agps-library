@@ -35,6 +35,9 @@ typedef struct _dict_node {
 
 int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy);
 char *GetVersion(void);
+int ParseConfig(char *buffer, const int bufferLen, node_t *paramDict);
+int GetValueFromKey(node_t *paramDict, const char* key, char *value);
+int ReadFile(const char* fileName, char *buffer);
 
 #ifdef __cplusplus
 }
