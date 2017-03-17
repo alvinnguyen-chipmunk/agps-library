@@ -31,7 +31,7 @@ extern "C"
 #include <assert.h>
 
 #ifndef STYL_SW_VERSION
-#define STYL_SW_VERSION     "1.2"
+#define STYL_SW_VERSION     "1.3"
 #endif
 
 static int CallBackWrite(void* buf, size_t len, size_t size, void* userdata);
