@@ -43,38 +43,6 @@ static int strength_to_dbm(int strength)
         return(int) (strength +(-110));
 }
 
-static NMDevice *get_wifi_device()
-{
-        int ret = 0;
-        NMClient *client;
-        const GPtrArray *deviceArr;
-        int i;
-        GError *error = NULL;
-        NMDevice *device;
-        int foundWifi = 0;
-
-
-
-        /* Get all devices managed by NetworkManager */
-        deviceArr = nm_client_get_devices(client);
-
-        /* Go through the array and process Wi-Fi devices */
-        for(i = 0; i < deviceArr->len; i++) {
-                device = g_ptr_array_index(deviceArr, i);
-                if(NM_IS_DEVICE_WIFI(device))
-                {
-                        foundWifi = 1;
-                        break;
-                }
-        }
-        if (!foundWifi) {
-                device = NULL;
-        }
-
-        g_object_unref(client);
-        return device;
-}
-
 int CreateJsonStringListAP(char *jsonString, int jsonStringLen)
 {
         const GPtrArray *apArr;
