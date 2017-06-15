@@ -21,7 +21,11 @@ examples/main.o
 libtool
 stylagps.o
 tags
-*libtool
+*libtool*
 stylagps_demo
 stylagps_send
 stylagps_receive
+*.tar.xz
+stylagps_demo_static
+stylagps_mqReceive
+stylagps_mqSend
