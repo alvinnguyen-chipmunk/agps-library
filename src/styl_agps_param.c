@@ -18,7 +18,7 @@ GHashTable * styl_agps_param_new(const gchar* filename)
     FILE *fp = NULL;
     gchar buffer[255];
 
-    g_return_if_fail(filename);
+    g_return_val_if_fail(filename, NULL);
 
     STYL_DEBUG("Parameter file: %s", filename);
 
@@ -39,13 +39,7 @@ GHashTable * styl_agps_param_new(const gchar* filename)
             token = g_strsplit_set (buffer,"=",-1);
             if(g_strv_length(token)==2)
             {
-#if 0
-                gchar * tmp_1 =  g_strdup(token[0]);
-                gchar * tmp_2 =  g_strdup(token[1]);
-                g_hash_table_insert(param_table, (gpointer )tmp_1,(gpointer)tmp_2);
-#else
                 g_hash_table_insert(param_table, (gpointer )g_strdup(token[0]),(gpointer)g_strdup(token[1]));
-#endif
             }
             g_strfreev(token);
         }

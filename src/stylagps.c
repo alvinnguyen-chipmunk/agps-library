@@ -42,9 +42,9 @@ gint StylAgpsGetLocation(GObject * nm_device, gdouble *latitude, gdouble *longit
     if(param_table)
     {
         //styl_agps_param_print(param_table);
-
+        STYL_DEBUG("Parameter pares was success!");
         /* ================== Create J-son String consist list Access Point ======================= */
-        json_string = styl_agps_json_new(NM_CLIENT(nm_device));
+        json_string = styl_agps_json_new(nm_device);
 
 //        json_string = g_strdup("{                     						           \
 //                                 \"wifiAccessPoints\":						           \
@@ -73,12 +73,14 @@ gint StylAgpsGetLocation(GObject * nm_device, gdouble *latitude, gdouble *longit
 //                                ");
         if(json_string)
         {
+            STYL_DEBUG("Create a json_string was success!");
             //DEBUG_1("Json String: %s", json_string);
             /* ---------------------------- Query location from Google API ------------------------ */
             http_data = styl_agps_query_exec(json_string, param_table);
-            DEBUG_1("\n************** http_data:\n%s", http_data);
+            STYL_DEBUG("\n************** http_data:\n%s", http_data);
             if(http_data)
             {
+                STYL_DEBUG("Query location was success!");
                 ret = styl_agps_utils_data_parse(http_data, &latitude, &longitude, &accuracy);
             }
             /* ------------------------------------------------------------------------------------ */
@@ -98,8 +100,6 @@ gint StylAgpsGetLocation(GObject * nm_device, gdouble *latitude, gdouble *longit
 
 GObject * StylAgpsInit()
 {
-    DEBUG_0();
-
     DATA_FILE = g_strdup_printf("%s/%s", __DATADIR__, DATA_NAME);
 
     if(DATA_FILE==NULL)

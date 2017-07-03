@@ -68,13 +68,10 @@ GSList * styl_agps_nm_get_ap_list(GObject * nm_client)
     for (gint i = 0; devices && (i < devices->len); i++)
     {
         tmp = g_ptr_array_index (devices, i);
-        if (nm_device_get_state (tmp) == NM_DEVICE_STATE_ACTIVATED)
+        if (NM_IS_DEVICE_WIFI (tmp))
         {
-            if (NM_IS_DEVICE_WIFI (tmp))
-            {
-                nm_device = tmp;
-                break;
-            }
+            nm_device = tmp;
+            break;
         }
     }
     if(nm_device!=NULL)
@@ -85,7 +82,7 @@ GSList * styl_agps_nm_get_ap_list(GObject * nm_client)
         g_main_loop_run (loop);                /* Run main loop until scan done! */
         g_main_loop_unref (loop);
 
-        access_points = nm_device_wifi_get_access_points (nm_device);
+        access_points = nm_device_wifi_get_access_points (NM_DEVICE_WIFI(nm_device));
         /* Print AP details */
         for (gint j = 0; access_points && (j < access_points->len); j++)
         {
