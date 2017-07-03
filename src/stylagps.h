@@ -18,18 +18,19 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#define DATA_NAME "stylagps.conf"
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif /* __cplusplus */
-
-#define CONFIG_FILE				"/etc/stylagps/stylagps.conf"
 
 gint        StylAgpsGetLocation(GObject * nm_device, gdouble *latitude, gdouble *longitude, gdouble *accuracy);
 
 GObject *   StylAgpsInit();
 
 void        StylAgpsFinalize(GObject * nm_device);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

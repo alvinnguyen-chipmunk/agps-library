@@ -17,8 +17,9 @@ libstylagps_la_SOURCES = \
 
 libstylagps_la_include_HEADERS = stylagps.h
 
-libstylagps_la_CFLAGS = $(DEBUG_CFLAGS) -std=c99 $(DBUS_GLIB_1_CFLAGS) \
-			$(LIBNM_GLIB_CFLAGS) $(GLIB_CFLAGS)	\
+libstylagps_la_CFLAGS = -D__DATADIR__=\""$(pkgdatadir)"\" 			\
+			$(DEBUG_CFLAGS) -std=c99 $(DBUS_GLIB_1_CFLAGS) 	\
+			$(LIBNM_GLIB_CFLAGS) $(GLIB_CFLAGS)		\
 			$(CURL_CFLAGS)
 
 libstylagps_la_LDFLAGS= $(DBUS_GLIB_1_LIBS) $(LIBNM_GLIB_LIBS)	\

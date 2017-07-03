@@ -20,6 +20,8 @@ GHashTable * styl_agps_param_new(const gchar* filename)
 
     g_return_if_fail(filename);
 
+    STYL_DEBUG("Parameter file: %s", filename);
+
     GHashTable * param_table = NULL;
     param_table = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 

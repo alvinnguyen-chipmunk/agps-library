@@ -26,6 +26,7 @@ extern "C"
 #define STYL_SW_VERSION     "1.3"
 #endif
 
+static gchar * DATA_FILE = NULL;
 
 gint StylAgpsGetLocation(GObject * nm_device, gdouble *latitude, gdouble *longitude, gdouble *accuracy)
 {
@@ -37,7 +38,7 @@ gint StylAgpsGetLocation(GObject * nm_device, gdouble *latitude, gdouble *longit
     g_return_val_if_fail(nm_device, EXIT_FAILURE);
 
     /* **************************** Read and parse configure file ********************************* */
-    param_table = styl_agps_param_new(CONFIG_FILE);
+    param_table = styl_agps_param_new(DATA_FILE);
     if(param_table)
     {
         //styl_agps_param_print(param_table);
@@ -98,6 +99,12 @@ gint StylAgpsGetLocation(GObject * nm_device, gdouble *latitude, gdouble *longit
 GObject * StylAgpsInit()
 {
     DEBUG_0();
+
+    DATA_FILE = g_strdup_printf("%s/%s", __DATADIR__, DATA_NAME);
+
+    if(DATA_FILE==NULL)
+        return NULL;
+
     NMClient *  nm_client = styl_agps_nm_get_nm_client();
     return (GObject *)(nm_client);
 }
