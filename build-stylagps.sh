@@ -15,8 +15,12 @@ config_stylagps()
 	if [ "$OS_TYPE" = "NA" ]; then
 		OS_TYPE=$(expr substr "$(lsb_release -i)" 17 33)
 	fi
-	if [ $IS_MAKE -eq $TRUE ]; then 
-		FOLDER=build_$OS_TYPE
+	if [ $IS_MAKE -eq $TRUE ]; then
+		if [ "$IS_RELEASE" = "NA" ]; then
+                        FOLDER=build_${OS_TYPE}_debug
+                else
+                        FOLDER=build_${OS_TYPE}_release
+                fi
 	else
 		if [ "$IS_RELEASE" = "NA" ]; then
 			FOLDER=build_${OS_TYPE}_package_debug
@@ -58,6 +62,8 @@ create_install_sh()
 }
 package_stylagps()
 {
+	create_install_sh
+
 	echo mkdir -p $FOLDER 
 	mkdir -p $FOLDER && cd $FOLDER
 	if [ ! -f Makefile ]; then
@@ -178,7 +184,7 @@ do
 done
 IS_DO=$FALSE
 config_stylagps
-create_install_sh
+
 if [ $IS_MAKE -eq $TRUE ]; then
 	IS_DO=$TRUE
 	make_stylagps
