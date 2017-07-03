@@ -1,72 +1,33 @@
-HOW TO BUILD STYLAGPS LIBRARY
+		PRODUCTION MANAGEMENT - USER MANUAL
 
-Please ensure that you have Yocto Krogoth SDK for styl-image-yellowfin*.
-Please contact STYL's system engineers for more detailed information.
+Before of all below step, we need to build excel lib. Go to ProductionManagement/package/libxlsxwriter directory then type
+	make 
 
-# Initialize development environment
-source <location of extracted SDK>/poky/2.1.1/environment-setup-cortexa9hf-neon-poky-linux-gnueabi
-
-# Generate autoconf file
-./autogen.sh
-
-# Configure package
-./configure --host=arm-poky-linux-gnueabi --prefix=${PWD}/image
-make -j4
-
-EXAMPLES
-
-stylagps_demo (source example/main.c):
-
-	An infinite loop runs to queries AGPS location via libstylagps API.
-	Output result to stdout.
-	Terminate process by hitting Ctrl-C
-
-stylagps_send (source example/stylAgpsSend.c):
-
-	Query AGPS location data and write to file to share with other processes.
-	IPC Concept: Write then wait until file is deleted by receiver.
-
-	An infinite loop runs to queries AGPS location via libstylagps API.
-	Output result to stdout with prefix "SEND".
-	Write data to AGPS_DATA_FILE (default is /tmp/stylagps.data).
-	To avoid race condition, AGPS_DATA_FILE is not updated until it deleted by reader.
-	Terminate process by hitting Ctrl-C
+Then we run autoconf by shell script autogen.sh with command:
+	./autogen.sh
 
 
-stylagps_receive (source example/stylAgpsReceive.c):
+[BUILD]: Only build and install PM into 'dir' directory. 
 
-	Receive AGPS location from AGPS_DATA_FILE which is feeded by stylagps_send.
-	IPC Concept: Read then delete to allow sender to update.
+	./build_pm -d <dir> -m -su
 
-	An infinite loop runs to queries AGPS location via libstylagps API.
-	Output result to stdout with prefix "RECEIVE".
-	Read data from AGPS_DATA_FILE (default is /tmp/stylagps.data).
-	To avoid race condition, AGPS_DATA_FILE is deleted after reading to allow sender do update.
-	Terminate process by hitting Ctrl-C
+"-d" is optical. Defauft install directory is /usr/local
 
-UPDATE PACKAGES
 
-	Update packages are usually provided in tarball named after stylagps_<feature/version>.tar.xz
-	To deploy this packages, please:
+[PACKAGE]: Create a 'ProductionManagement.deb' install file. That will be install on other Debian/Ubuntu.
 
-	mkdir stylagps
-	tar xf stylagps_<feature/version>.tar.xz -C stylagps
-	cp -r stylagps/etc /
-	cp -r stylagps/usr /	OR	{cp -r stylagps/lib /usr & cp -r stylagps/bin /usr}
+	./build_pm -p -pkg_name ProductionManagement -r -su
 
-HEADERS
-	
-	stylagps.h
+"-r" 			option will remove all debug information from source code on terminal.
+"-pkg_name"  <a>	'a' can change to other leter or empty
 
-	NOTE: you may want to copy header into ${BUILD_SYSROOT}/usr/include
 
-CONFIGURATION
+************************************************************************************************************
 
-	Behavior of libstylagps and some examples can be configured via /etc/stylagps/stylagps.conf
+To use Courier font:
+	apt-get install ttf-mscorefonts-installer
 
-	- keyAPI: key API of Google Geolocation to be authorized to query Google API
-	- geoLocationURL: link to access Google API
-	- googleRequestTimeoutSec: timeout of Google API request.
-	  Please adjust this to be complied with your internet connection speed.
-	- agpsUpdateFrequencyUSec: used in stylagps_mqSend (resolution usec) to configure update frequency.
+To use alsa driver to play alert sound
+	apt-get install alsa-utils
 
+mpg321 -w alert.wav alert.mp3

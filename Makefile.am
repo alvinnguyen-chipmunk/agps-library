@@ -1,22 +1,39 @@
-lib_LTLIBRARIES = libstylagps.la
+## Process this file with automake to produce Makefile.in
+
+SUBDIRS = po src examples
+
+AUTOMAKE_OPTIONS = 1.7
+
 ACLOCAL_AMFLAGS = -I m4
-AM_CFLAGS = -std=c99 $(LIBNM_CFLAGS) $(GLIB_CFLAGS) $(JSON_CFLAGS) $(CURL_CFLAGS)
-AM_LDFLAGS= $(LIBNM_LIBS) $(GLIB_LIBS) $(JSON_LIBS) $(CURL_LIBS)
-libstylagps_la_SOURCES = stylagps.c stylAgpsUtils.c
-include_HEADERS = stylagps.h stylAgpsUtils.h
 
-# Reference application
-bin_PROGRAMS = stylagps_demo stylagps_send stylagps_receive stylagps_mqSend stylagps_mqReceive
-stylagps_demo_SOURCES = examples/main.c
-stylagps_demo_LDADD = libstylagps.la
-stylagps_send_SOURCES = examples/stylAgpsSend.c
-stylagps_send_LDADD = libstylagps.la
-stylagps_receive_SOURCES = examples/stylAgpsReceive.c
-stylagps_receive_LDADD = libstylagps.la
-stylagps_mqSend_SOURCES = examples/stylAgpsMQSend.c
-stylagps_mqSend_LDADD = libstylagps.la
-stylagps_mqReceive_SOURCES = examples/stylAgpsMQReceive.c
-stylagps_mqReceive_LDADD = libstylagps.la
+EXTRA_DIST = \
+	autogen.sh \
+	libstylagps.pc.in
 
-extradir = /etc/stylagps
-extra_DATA = stylagps.conf
+stylagps_datadir = /etc/stylagps
+
+uninstall-local:
+	rm -rf $(DESTDIR)$(pkgdatadir);
+	rm -rf $(stylagps_datadir);
+
+install-data-local: install-data-only
+	@$(NORMAL_INSTALL)
+
+install-data-only:
+	@$(NORMAL_INSTALL)
+	##$(mkinstalldirs) $(DESTDIR)$(pkgdatadir); \
+	##for file in $(srcdir)/data/*; do \
+	##  if test -f $$file; then \
+	##    $(INSTALL_DATA) $$file $(DESTDIR)$(pkgdatadir)/; \
+	##  fi \
+	##done
+	$(mkinstalldirs) $(stylagps_datadir)
+	if test -f $(builddir)/data/stylagps.conf; then \
+		$(INSTALL_DATA) $(builddir)/data/stylagps.conf $(stylagps_datadir)/; \
+	fi
+	
+
+pkgconfig_DATA = libstylagps.pc
+pkgconfigdir = $(libdir)/pkgconfig
+
+@INTLTOOL_DESKTOP_RULE@

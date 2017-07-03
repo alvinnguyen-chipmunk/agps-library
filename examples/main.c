@@ -9,78 +9,193 @@
  strictly limited by the confidential information provisions of the *
  Agreement referenced above. *
  ******************************************************************************/
+#if 0
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "styl_agps_tmp.h"
+
+/* Global variables */
+static gint LOOP_COUNT = 500;
+
+int main(int argc, char *argv[])
+{
+    GObject * client = tmp_init();
+    if(client!=NULL)
+    {
+        while(LOOP_COUNT)
+        {
+            printf("\n");
+            g_message("Running [%d]...", LOOP_COUNT);
+
+            tmp_execute(client);
+
+            sleep(1);
+            LOOP_COUNT--;
+        }
+        tmp_free(client);
+    }
+    return EXIT_SUCCESS;
+}
+
+// Change Log:
+// 23 Apr 2013        Galen        Created
+
+#else
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <glib.h>
+#include <glib-object.h>
 #include <unistd.h>
 #include <signal.h>
-#include <pthread.h>
+
 #include "stylagps.h"
 
-static int run = 1;
+#if 0
+#define USING_THREAD
+#else
+#ifdef USING_THREAD
+#undef USING_THREAD
+#endif // USING_THREAD
+#endif // 1
 
-void HandleSignal(int sig);
-void *QueryLocation(void *threadID);
+static gint LOOP_COUNT = 10000;
+static gint run = 1;
 
-int main(int argc, const char * argv[]) {
-        
-        double longitude = 0;
-        double latitude = 0;
-        double accuracy = 0;
-        unsigned long long i = 0;
-        pthread_t threads;
-        int ret = 0;
-        int rc = 0;
-        
-        printf("Version: %s\n", GetVersion());
-        
-        signal(SIGINT, HandleSignal);
-        
-        
-//        for (int i = 0; i < 4; i++)
-//        {
-                rc = pthread_create(&threads, NULL, QueryLocation, NULL);
-                if (rc)
-                {
-                        printf("ERROR: return code from pthread_create() is %d\n", rc);
-                        exit(-1);
-                }
-//        }
-        
-        while(run)
-        {
-                sleep(1);
-        }
-        
-        pthread_exit(NULL);
-        
-        return ret;
-}
+#define TIME_SLEEP 3
 
-void HandleSignal(int sig)
+#ifdef USING_THREAD
+G_LOCK_DEFINE(run);
+#endif // USING_THREAD
+
+static void HandleSignal(gint sig)
 {
-        if (sig == SIGINT)
-        {
-                printf("Stop stylagps_demo. Thank you for using STYL demos!\n");
-                run = 0;
-        }
+    if (sig == SIGINT)
+    {
+        printf("\nStop stylagps_demo. Thank you for using STYL demos!\n");
+#ifdef USING_THREAD
+        G_LOCK (run);
+#endif // USING_THREAD
+        run = 0;
+#ifdef USING_THREAD
+        G_UNLOCK (run);
+#endif // USING_THREAD
+    }
 }
 
-void *QueryLocation(void *threadID)
+#ifndef USING_THREAD
+
+gint main(int argc, const char * argv[])
 {
-        double longitude = 0;
-        double latitude = 0;
-        double accuracy = 0;
-        int ret = 0;
-        while(run)
+    gdouble longitude = 0;
+    gdouble latitude = 0;
+    gdouble accuracy = 0;
+    gint ret = EXIT_FAILURE;
+
+    signal(SIGINT, HandleSignal);
+
+    GObject * nm_client = StylAgpsInit();
+
+    g_return_val_if_fail(nm_client, EXIT_FAILURE);
+
+    printf("\n\n======================================================================\n\n");
+
+    while(LOOP_COUNT)
+    {
+        if(run==0)
+            break;
+
+        g_message("Running [%d]...", LOOP_COUNT);
+
+        ret = StylAgpsGetLocation(nm_client, &latitude, &longitude, &accuracy);
+
+        if (EXIT_SUCCESS == ret)
         {
-                ret = StylAgpsGetLocation(&longitude, &latitude, &accuracy);
-                
-                if (EXIT_SUCCESS == ret)
-                {
-                        printf("[SUB]Lng: %f\tLat: %f\tAcc: %f\t\n", longitude, latitude, accuracy);
-                }
-                sleep(3);
+            g_message(" => Response: \n    Latitude: %.8f Longitude: %.8f Accuracy: %.8f\t\n", latitude, longitude, accuracy);
         }
-        pthread_exit(NULL);
+        else
+        {
+            g_warning("Cannot query locaion. Retry with debug option to get more information.");
+        }
+        sleep(TIME_SLEEP);
+        LOOP_COUNT--;
+
+        printf("\n\n======================================================================\n\n");
+    }
+
+    StylAgpsFinalize(nm_client);
+
+    return EXIT_SUCCESS;
 }
+
+#else
+
+static gpointer *QueryLocation(gpointer *thread_arg);
+static void HandleSignal(int sig);
+
+int main(int argc, const char * argv[])
+{
+    unsigned long long i = 0;
+    GThread * threads;
+
+    signal(SIGINT, HandleSignal);
+
+    threads = g_thread_new("agps_child_thread", (gpointer)QueryLocation, NULL);
+
+    if (threads==NULL)
+    {
+        printf("ERROR: return code from g_thread_new()");
+        exit(-1);
+    }
+
+    printf("\nJoining child thread ...\n");
+    if (g_thread_join(threads) == 0)
+    {
+        printf("\nMain thread exit without error!\n");
+        exit(EXIT_SUCCESS);
+    }
+    perror("\nThread join");
+    printf("\nMain thread exit with a error!\n");
+    exit(EXIT_FAILURE);
+
+}
+
+static gpointer *QueryLocation(gpointer *thread_arg)
+{
+    gdouble longitude = 0;
+    gdouble latitude = 0;
+    gdouble accuracy = 0;
+    gint ret;
+
+    while(LOOP_COUNT)
+    {
+        G_LOCK (run);
+        if(run==0)
+        {
+            G_UNLOCK (run);
+            break;
+        }
+        G_UNLOCK (run);
+
+        ret = FALSE;
+        ret = StylAgpsGetLocation(&longitude, &latitude, &accuracy);
+
+        if (EXIT_SUCCESS == ret)
+        {
+            g_message("    => Response: \n                Latitude: %.8f Longitude: %.8f Accuracy: %.8f\t\n", latitude, longitude, accuracy);
+        }
+        else
+        {
+            g_warning("Cannot query locaion. Retry with debug option to get more information.");
+        }
+        sleep(1);
+        LOOP_COUNT--;
+    }
+
+    printf("\nChild thread exit!\n");
+    g_thread_exit(NULL);
+}
+#endif // 1
+
+#endif
