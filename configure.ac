@@ -12,9 +12,6 @@ AC_DISABLE_STATIC
 
 AC_PROG_CC
 AM_PROG_CC_C_O
-AC_PROG_CXX
-AC_PROG_CXX_C_O
-AC_PROG_CXXCPP
 AM_PROG_AR
 AC_PROG_LIBTOOL
 AC_PROG_INSTALL
@@ -22,14 +19,6 @@ AC_PROG_LN_S
 AC_PROG_INTLTOOL
 
 LT_INIT
-
-AC_PROG_CXX([g++])
-# check for C++ compiler explicitly and fail if none is found, do this check
-# after AC_PROG_CXX has set the CXX environment variable
-which $CXX >/dev/null 2>&1
-if test "x$?" != "x0"; then
-	AC_MSG_ERROR([No C++ compiler found. Please install a C++ compiler.])
-fi
 
 # Configure for libtool
 AM_PROG_LIBTOOL
