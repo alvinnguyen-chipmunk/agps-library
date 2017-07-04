@@ -1,7 +1,7 @@
 ######################### STYL AGPS library ############################
 
 DEBUG_CFLAGS = -g -ggdb
-PM_CONFIG_DIR = .libstylagps
+stylagps_datadir = /etc/stylagps
 
 lib_LTLIBRARIES = libstylagps.la
 
@@ -17,7 +17,7 @@ libstylagps_la_SOURCES = \
 
 libstylagps_la_include_HEADERS = stylagps.h
 
-libstylagps_la_CFLAGS = -D__DATADIR__=\""$(pkgdatadir)"\" 			\
+libstylagps_la_CFLAGS = -D__DATADIR__=\""$(stylagps_datadir)"\" 			\
 			$(DEBUG_CFLAGS) -std=c99 $(DBUS_GLIB_1_CFLAGS) 	\
 			$(LIBNM_GLIB_CFLAGS) $(GLIB_CFLAGS)		\
 			$(CURL_CFLAGS)
