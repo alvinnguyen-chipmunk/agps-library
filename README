@@ -1,33 +1,57 @@
-		PRODUCTION MANAGEMENT - USER MANUAL
+HOW TO BUILD
 
-Before of all below step, we need to build excel lib. Go to ProductionManagement/package/libxlsxwriter directory then type
-	make 
+	Please ensure that you have Yocto Krogoth SDK for styl-image-yellowfin*.
+	Please contact STYL's system engineers for more detailed information.
 
-Then we run autoconf by shell script autogen.sh with command:
-	./autogen.sh
+	# Initialize development environment
+	source <location of extracted SDK>/poky/2.1.1/environment-setup-cortexa9hf-neon-poky-linux-gnueabi
 
+	# Generate autoconf file
+		./autogen.sh
 
-[BUILD]: Only build and install PM into 'dir' directory. 
+	# Configure package
+		./configure --host=arm-poky-linux-gnueabi --prefix=${PWD}/image
+	
+	# Compile package
+		make -j4
 
-	./build_pm -d <dir> -m -su
+	# Install package
+		make install
 
-"-d" is optical. Defauft install directory is /usr/local
+EXAMPLES
 
+	stylagps_demo (source examples/main.c):
 
-[PACKAGE]: Create a 'ProductionManagement.deb' install file. That will be install on other Debian/Ubuntu.
+		An infinite loop runs to queries AGPS location via libstylagps API.
+		Output result to stdout.
+		Terminate process by hitting Ctrl-C
 
-	./build_pm -p -pkg_name ProductionManagement -r -su
+HEADERS
+	
+	stylagps.h
 
-"-r" 			option will remove all debug information from source code on terminal.
-"-pkg_name"  <a>	'a' can change to other leter or empty
+	NOTE: you may want to copy header into ${BUILD_SYSROOT}/usr/include
 
+INTERFACE
 
-************************************************************************************************************
+	- Initialize a NMClient Object
+		GObject * StylAgpsInit();
+	
+	- Clean up for NMClient Object
+		void StylAgpsFinalize(GObject * nm_device);
 
-To use Courier font:
-	apt-get install ttf-mscorefonts-installer
+	- Query location from Google
+		gint StylAgpsGetLocation(GObject * nm_device,
+					 gdouble *latitude, gdouble *longitude, gdouble *accuracy);
 
-To use alsa driver to play alert sound
-	apt-get install alsa-utils
+	
+CONFIGURATION
 
-mpg321 -w alert.wav alert.mp3
+	Behavior of libstylagps and some examples can be configured via /etc/stylagps/stylagps.conf
+
+	- keyAPI: key API of Google Geolocation to be authorized to query Google API
+	- geoLocationURL: link to access Google API
+	- googleRequestTimeoutSec: timeout of Google API request.
+	  Please adjust this to be complied with your internet connection speed.
+	- agpsUpdateFrequencyUSec: used in stylagps_mqSend (resolution usec) to configure update frequency.
+
