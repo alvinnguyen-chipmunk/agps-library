@@ -70,7 +70,6 @@ Makefile
 src/Makefile
 examples/Makefile
 libstylagps.pc
-po/Makefile.in
 data/stylagps.conf
 ])
 

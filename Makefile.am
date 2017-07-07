@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = po src examples
+SUBDIRS = src examples
 
 AUTOMAKE_OPTIONS = 1.7
 
@@ -30,5 +30,3 @@ install-data-only:
 
 pkgconfig_DATA = libstylagps.pc
 pkgconfigdir = $(libdir)/pkgconfig
-
-@INTLTOOL_DESKTOP_RULE@
