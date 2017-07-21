@@ -15,6 +15,7 @@ stylagps_datadir = /etc/stylagps
 uninstall-local:
 	rm -rf $(DESTDIR)$(pkgdatadir);
 	rm -rf $(stylagps_datadir);
+	rm -rf $(DESTDIR)$(includedir)/libstylagps;
 
 install-data-local: install-data-only
 	@$(NORMAL_INSTALL)
