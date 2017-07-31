@@ -1,0 +1,14 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+localedir=@localedir@
+
+Name: STYL AGPS
+Description: A library to get GPS potition from list Access point
+Requires: glib-2.0 libnm-glib gobject-2.0 libcurl 
+Version: @VERSION@
+Libs: -L${libdir} -lstylagps
+Cflags: -I${includedir}/libstylagps

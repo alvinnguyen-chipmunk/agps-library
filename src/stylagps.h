@@ -13,31 +13,23 @@
 #ifndef libstyl_agps_h
 #define libstyl_agps_h
 
-#define MAX_PARAM_NODE			10
-#define PARAM_LEN				(255 + 1)		// Supported path name + 1 terminator char
-#define BUFFER_LEN				( ( (PARAM_LEN) * 2) * MAX_PARAM_NODE )	// each node has 1 value and 1 key
-#define URL_LEN					2083
-#define JSON_BUFFER_LEN				10000
-#define DEFAULT_TIME_SEC		10
-#define CONFIG_FILE				"/etc/stylagps/stylagps.conf"
-#define GOOGLE_GEOLOCATION_URL	"https://www.googleapis.com/geolocation/v1/geolocate?"
-#define AGPS_DATA_FILE  "/tmp/stylagps.data"
+#include <stdio.h>
+#include <stdlib.h>
+#include <glib.h>
+#include <glib-object.h>
+
+#define DATA_NAME "stylagps.conf"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif /* __cplusplus */
 
-typedef struct _dict_node {
-	char key[PARAM_LEN];
-	char value[PARAM_LEN];
-} node_t;
+gint        StylAgpsGetLocation(GObject * nm_device, gdouble *latitude, gdouble *longitude, gdouble *accuracy);
 
-int StylAgpsGetLocation(double *longitude, double *latitude, double *accuracy);
-char *GetVersion(void);
-int ParseConfig(char *buffer, const int bufferLen, node_t *paramDict);
-int GetValueFromKey(node_t *paramDict, const char* key, char *value);
-int ReadFile(const char* fileName, char *buffer);
+GObject *   StylAgpsInit();
+
+void        StylAgpsFinalize(GObject * nm_device);
 
 #ifdef __cplusplus
 }
