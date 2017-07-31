@@ -42,7 +42,6 @@ DIE=0
 	echo "**Error**: You must have \`automake' (1.7 or later) installed."
 	echo "You can get it from: ftp://ftp.gnu.org/pub/gnu/"
 	DIE=1
-	NO_AUTOMAKE=yes
 }
 
 
@@ -60,32 +59,40 @@ if test "$DIE" -eq 1; then
 	exit 1
 fi
 
-if test -z "$*"; then
-	echo "**Warning**: I am going to run \`configure' with no arguments."
-	echo "If you wish to pass any to it, please specify them on the"
-	echo \`$0\'" command line."
-	echo
-fi
+echo "=============== checking is OK =============="
 
-echo "=============== configure.ac =============="
-
-NOCONFIGURE=1
+ERROR=0
 
 echo "Processing libtoolize --copy --force || glibtoolize --copy --force"
 libtoolize --copy --force || glibtoolize --copy --force
+if [ "$?" -ne "0" ]; then
+	ERROR=1	
+fi
+
 echo "Processing aclocal"
 aclocal
+if [ "$?" -ne "0" ]; then
+	ERROR=1	
+fi
+
 echo "Processing automake --add-missing --copy --gnu"
 automake --add-missing --copy --gnu
+if [ "$?" -ne "0" ]; then
+	ERROR=1	
+fi
+
 echo "Processing autoconf"
 autoconf
+if [ "$?" -ne "0" ]; then
+	ERROR=1	
+fi
 
-if [ "$NOCONFIGURE" = 1 ]; then
-    echo "Done. configure skipped."
+if [ "${ERROR}" -eq "0" ]; then
+    echo "Done. configure and others skipped."
     exit 0;
 else
-    echo "Error, configure removed."
-    rm configure
+    echo "Error, configure and ohters removed."
+    rm -rf configure Makefile.in src/Makefile.in examples/Makefile.in m4 aclocal.m4 build-aux autom4te.cache
     exit 1;
 fi
 
