@@ -7,6 +7,7 @@
 #define STYL_AGPS_PARAM_TIMEOUT_DEFAULT   10
 #define STYL_AGPS_PARAM_URL               "geoLocationURL"
 #define STYL_AGPS_PARAM_KEY               "keyAPI"
+#define STYL_AGPS_FREQ_USEC               "agpsUpdateFrequencyUSec"
 
 GHashTable *    styl_agps_param_new(const gchar* filename);
 

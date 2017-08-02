@@ -25,11 +25,15 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-gint        StylAgpsGetLocation(GObject * nm_device, gdouble *latitude, gdouble *longitude, gdouble *accuracy);
+gint            StylAgpsGetLocation(GObject * nm_device, gdouble *latitude, gdouble *longitude, gdouble *accuracy);
 
-GObject *   StylAgpsInit();
+GObject *       StylAgpsInit();
 
-void        StylAgpsFinalize(GObject * nm_device);
+void            StylAgpsFinalize(GObject * nm_device);
+
+gchar *         StylAgpsGetVersion(void);
+
+unsigned long   StylAgpsGetFrequencyUSec();
 
 #ifdef __cplusplus
 }
