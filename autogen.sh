@@ -82,7 +82,7 @@ if [ "$?" -ne "0" ]; then
 fi
 
 echo "Processing autoconf"
-autoconf
+autoreconf
 if [ "$?" -ne "0" ]; then
 	ERROR=1	
 fi
