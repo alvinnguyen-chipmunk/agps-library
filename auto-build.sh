@@ -31,9 +31,14 @@ config_stylagps()
 	if [ "$DIR_INSTALL" = "NA" ]; then 
 		DIR_INSTALL=/usr/local
 	fi
-	CONF_FLAGS="--prefix=$DIR_INSTALL"
+	
+	if [ "$IS_RELEASE" = "NA" ]; then
+		CONF_FLAGS="--prefix=$DIR_INSTALL --enable-debug"
+	else
+		CONF_FLAGS="--prefix=$DIR_INSTALL"
+	fi
 }
-TYPE_PACK_OP="-D"
+
 make_stylagps()
 {
 	
@@ -45,8 +50,8 @@ make_stylagps()
 			export  CXXFLAGS="$CXXFLAGS"
 			export  CFLAGS="$CFLAGS"
 		else
-			export  CXXFLAGS="$CXXFLAGS $IS_RELEASE"
-			export  CFLAGS="$CFLAGS $IS_RELEASE"
+			export  CXXFLAGS="$CXXFLAGS"
+			export  CFLAGS="$CFLAGS"
 		fi
 		../configure $CONF_FLAGS 
 	fi
@@ -60,6 +65,9 @@ create_install_sh()
 	echo "make install" > "${F_INSTALL}"
 	chmod +x ${FOLDER}/install.sh
 }
+
+TYPE_PACK_OP="-D"
+
 package_stylagps()
 {
 	create_install_sh
@@ -73,8 +81,8 @@ package_stylagps()
 			export  CXXFLAGS="$CXXFLAGS"
 
 		else
-			export  CXXFLAGS="$CXXFLAGS $IS_RELEASE"
-			export  CFLAGS="$CFLAGS $IS_RELEASE"
+			export  CXXFLAGS="$CXXFLAGS"
+			export  CFLAGS="$CFLAGS"
 		fi
 
 		../configure $CONF_FLAGS 
