@@ -22,10 +22,6 @@ extern "C"
 #include "styl_agps_param.h"
 #include "styl_agps_nm.h"
 
-#ifndef STYL_SW_VERSION
-#define STYL_SW_VERSION     "1.3"
-#endif
-
 static gchar * DATA_FILE = NULL;
 
 gint StylAgpsGetLocation(GObject * nm_device, gdouble *latitude, gdouble *longitude, gdouble *accuracy)
@@ -43,34 +39,10 @@ gint StylAgpsGetLocation(GObject * nm_device, gdouble *latitude, gdouble *longit
     {
         //styl_agps_param_print(param_table);
         STYL_DEBUG("Parameter pares was success!");
+
         /* ================== Create J-son String consist list Access Point ======================= */
         json_string = styl_agps_json_new(nm_device);
 
-//        json_string = g_strdup("{                     						           \
-//                                 \"wifiAccessPoints\":						           \
-//                                [								           \
-//                                    { \"macAddress\": \"B4:75:0E:C5:36:C3\",\"signalStrength\": -35 }      \
-//                                ,    { \"macAddress\": \"78:44:76:61:12:CC\",\"signalStrength\": -33 }     \
-//                                ,    { \"macAddress\": \"48:F8:B3:2E:EA:78\",\"signalStrength\": -36 }     \
-//                                ,    { \"macAddress\": \"B4:75:0E:C5:36:C4\",\"signalStrength\": -45 }     \
-//                                ,    { \"macAddress\": \"48:F8:B3:2E:EA:3D\",\"signalStrength\": -45 }     \
-//                                ,    { \"macAddress\": \"60:E3:27:3F:60:9E\",\"signalStrength\": -46 }     \
-//                                ,    { \"macAddress\": \"14:91:82:7D:66:C7\",\"signalStrength\": -66 }     \
-//                                ,    { \"macAddress\": \"48:F8:B3:2E:EA:79\",\"signalStrength\": -75 }     \
-//                                ,    { \"macAddress\": \"DC:FB:02:D3:54:AC\",\"signalStrength\": -10 }     \
-//                                ,    { \"macAddress\": \"9C:AD:97:C5:E5:46\",\"signalStrength\": -18 }     \
-//                                ,    { \"macAddress\": \"48:F8:B3:2E:EA:3C\",\"signalStrength\": -45 }     \
-//                                ,    { \"macAddress\": \"00:23:F8:5D:57:39\",\"signalStrength\": -23 }     \
-//                                ,    { \"macAddress\": \"98:DE:D0:E5:EF:7E\",\"signalStrength\": -46 }     \
-//                                ,    { \"macAddress\": \"EE:0E:C4:51:07:BC\",\"signalStrength\": -63 }     \
-//                                ,    { \"macAddress\": \"C8:3A:35:5F:11:80\",\"signalStrength\": -60 }     \
-//                                ,    { \"macAddress\": \"EC:08:6B:37:A7:7D\",\"signalStrength\": -66 }     \
-//                                ,    { \"macAddress\": \"B4:75:0E:16:58:A2\",\"signalStrength\": -76 }     \
-//                                ,    { \"macAddress\": \"A4:2B:B0:D1:F5:44\",\"signalStrength\": -81 }     \
-//                                ,    { \"macAddress\": \"EC:22:80:D1:F9:C2\",\"signalStrength\": -81 }     \
-//                                 ] 									   \
-//                                }     									   \
-//                                ");
         if(json_string)
         {
             STYL_DEBUG("Create a json_string was success!");
@@ -100,7 +72,8 @@ gint StylAgpsGetLocation(GObject * nm_device, gdouble *latitude, gdouble *longit
 
 GObject * StylAgpsInit()
 {
-    DATA_FILE = g_strdup_printf("%s/%s", __DATADIR__, DATA_NAME);
+    if(__DATADIR__)
+        DATA_FILE = g_strdup_printf("%s/%s", __DATADIR__, DATA_NAME);
 
     if(DATA_FILE==NULL)
         return NULL;
@@ -111,9 +84,14 @@ GObject * StylAgpsInit()
 
 void StylAgpsFinalize(GObject * nm_device)
 {
+    g_free(DATA_FILE);
     styl_agps_nm_free_all(nm_device);
 }
 
+gchar * StylAgpsGetVersion(void)
+{
+        return VERSION;
+}
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

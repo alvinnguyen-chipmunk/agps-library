@@ -25,57 +25,57 @@ static int run = 1;
 
 void HandleSignal(int sig);
 
-int main(int argc, const char * argv[]) {
-        
-        double longitude = 0;
-        double latitude = 0;
-        double accuracy = 0;
-        int ret = 0;
-	int fd = 0;
-	mqd_t mq;
-	struct mq_attr attr;
-	char buffer[MAX_SIZE];
-        ssize_t bytes_read;
-	mode_t omask;
+int main(int argc, const char * argv[])
+{
 
-	omask = umask(0);
+    double longitude = 0;
+    double latitude = 0;
+    double accuracy = 0;
+    int ret = 0;
+    int fd = 0;
+    mqd_t mq;
+    struct mq_attr attr;
+    char buffer[MAX_SIZE];
+    ssize_t bytes_read;
+    mode_t omask;
 
-	attr.mq_flags = 0;
-	attr.mq_maxmsg = 10;
-	attr.mq_msgsize = MAX_SIZE;
-	attr.mq_curmsgs = 0;
+    omask = umask(0);
 
-	mq = mq_open(AGPS_QUEUE_NAME, O_CREAT | O_RDONLY | O_NOCTTY | O_SYNC, 0777, &attr);
-	CHECK((mqd_t)-1 != mq);
-        memset(buffer, '\0', MAX_SIZE);
+    attr.mq_flags = 0;
+    attr.mq_maxmsg = 10;
+    attr.mq_msgsize = MAX_SIZE;
+    attr.mq_curmsgs = 0;
 
-        signal(SIGINT, HandleSignal);
+    mq = mq_open(AGPS_QUEUE_NAME, O_CREAT | O_RDONLY | O_NOCTTY | O_SYNC, 0777, &attr);
+    CHECK((mqd_t)-1 != mq);
+    memset(buffer, '\0', MAX_SIZE);
 
-        while(run)
+    signal(SIGINT, HandleSignal);
+
+    while(run)
+    {
+        bytes_read = mq_receive(mq, buffer, MAX_SIZE, NULL);
+        if (bytes_read > 0)
         {
-		bytes_read = mq_receive(mq, buffer, MAX_SIZE, NULL);
-		if (bytes_read > 0)
-		{
-			sscanf(buffer, "%lf %lf %lf", &longitude, &latitude, &accuracy);
-			printf("RECEIVED: Lng: %f - Lat: %f - Acc: %f\n", AGPS_QUEUE_NAME, longitude, latitude, accuracy);
-			memset(buffer, '\0', MAX_SIZE);
-		}
-
-		usleep(3000000);
+            sscanf(buffer, "%lf %lf %lf", &longitude, &latitude, &accuracy);
+            printf("RECEIVED from '%s' Lng: %f - Lat: %f - Acc: %f\n", AGPS_QUEUE_NAME, longitude, latitude, accuracy);
+            memset(buffer, '\0', MAX_SIZE);
         }
+        usleep(AGPS_FREQ_SEC);
+    }
 
-	CHECK((mqd_t)-1 != mq_close(mq));
-	CHECK((mqd_t)-1 != mq_unlink(AGPS_QUEUE_NAME));
-	umask(omask);
+    CHECK((mqd_t)-1 != mq_close(mq));
+    CHECK((mqd_t)-1 != mq_unlink(AGPS_QUEUE_NAME));
+    umask(omask);
 
-        return ret;
+    return ret;
 }
 
 void HandleSignal(int sig)
 {
-        if (sig == SIGINT)
-        {
-                printf("Stop stylagps_demo. Thank you for using STYL demos!\n");
-                run = 0;
-        }
+    if (sig == SIGINT)
+    {
+        printf("Stop stylagps_demo. Thank you for using STYL demos!\n");
+        run = 0;
+    }
 }

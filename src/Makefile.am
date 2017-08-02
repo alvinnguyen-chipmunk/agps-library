@@ -1,7 +1,10 @@
 ######################### STYL AGPS COMMON VARIABLE ############################
-
+if DEBUG
 DEBUG_CFLAGS = -g -ggdb
-   
+else
+DEBUG_CFLAGS = -D__RELEASE__
+endif
+
 stylagps_datadir = /etc/stylagps
 STYLAGPS_includedir = $(includedir)/libstylagps
 STYLAGPS_SOURCES = 					\
@@ -49,5 +52,5 @@ libstylagps_a_include_HEADERS = $(STYLAGPS_include_HEADERS)
 
 libstylagps_a_CFLAGS = $(STYLAGPS_CFLAGS)
 
-libstylagps_a_LIBADD = 
+libstylagps_a_LIBADD =
 

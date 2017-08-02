@@ -15,54 +15,62 @@
 #include <unistd.h>
 #include <signal.h>
 #include <fcntl.h>
+#include <glib.h>
+#include <glib-object.h>
 #include "stylagps.h"
+#include "common.h"
 
 static int run = 1;
 
 void HandleSignal(int sig);
 
-int main(int argc, const char * argv[]) {
-        
-        double longitude = 0;
-        double latitude = 0;
-        double accuracy = 0;
-        int ret = 0;
-	int fd = 0;
-        
-        printf("Version: %s\n", GetVersion());
-        
-        signal(SIGINT, HandleSignal);
+int main(int argc, const char * argv[])
+{
 
-        while(run)
+    double longitude = 0;
+    double latitude = 0;
+    double accuracy = 0;
+    int ret = 0;
+    int fd = 0;
+
+    printf("Version: %s\n", StylAgpsGetVersion());
+
+    signal(SIGINT, HandleSignal);
+
+    GObject * nm_client = StylAgpsInit();
+
+    while(run)
+    {
+
+        fd = open(AGPS_DATA_FILE, O_WRONLY | O_CREAT | O_EXCL | O_NOCTTY | O_SYNC, 0777);
+        if(fd > 0)
         {
-                
-		fd = open(AGPS_DATA_FILE, O_WRONLY | O_CREAT | O_EXCL | O_NOCTTY | O_SYNC, 0777);
-		if(fd > 0)
-		{
-			ret = StylAgpsGetLocation(&longitude, &latitude, &accuracy);
-			if (EXIT_SUCCESS == ret)
-			{
-				printf("SEND [Lng: %f\tLat: %f\tAcc: %f]\n", longitude, latitude, accuracy);
-				write(fd, &longitude, sizeof(longitude));
-				write(fd, " ", 1);
-				write(fd, &latitude, sizeof(latitude));
-				write(fd, " ", 1);
-				write(fd, &accuracy, sizeof(accuracy));
-			}
+            ret = StylAgpsGetLocation(nm_client, &latitude, &longitude, &accuracy);
+            if (EXIT_SUCCESS == ret)
+            {
+                printf("SEND [Lng: %f\tLat: %f\tAcc: %f]\n", longitude, latitude, accuracy);
+                write(fd, &longitude, sizeof(longitude));
+                write(fd, " ", 1);
+                write(fd, &latitude, sizeof(latitude));
+                write(fd, " ", 1);
+                write(fd, &accuracy, sizeof(accuracy));
+            }
 
-			close(fd);
-		}
-                usleep(3000000);
+            close(fd);
         }
+        usleep(AGPS_FREQ_SEC);
+    }
 
-        return ret;
+    StylAgpsFinalize(nm_client);
+
+    return ret;
 }
 
 void HandleSignal(int sig)
 {
-        if (sig == SIGINT)
-        {
-                printf("Stop stylagps_demo. Thank you for using STYL demos!\n");
-                run = 0;
-        }
+    if (sig == SIGINT)
+    {
+        printf("Stop stylagps_demo. Thank you for using STYL demos!\n");
+        run = 0;
+    }
 }
