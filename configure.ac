@@ -64,14 +64,19 @@ DBUS_GLIB_1_VERSION=`$PKG_CONFIG --modversion ${dbus_glib_1_modules}`
 
 
 dnl ================================================================
+AC_ARG_ENABLE([yocto],
+[  --enable-yocto    Turn on debugging],
+[case "${enableval}" in
+  yes) yocto=true ;;
+  no)  yocto=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
+esac],[yocto=false])
 
-AC_OUTPUT([
-Makefile
-src/Makefile
-examples/Makefile
-libstylagps.pc
-data/stylagps.conf
-])
+AM_CONDITIONAL([YOCTO], [test x$yocto = xtrue])
+
+AC_CONFIG_FILES([ Makefile src/Makefile examples/Makefile])
+
+AC_OUTPUT([ libstylagps.pc data/stylagps.conf])
 
 dnl ================================================================
 
