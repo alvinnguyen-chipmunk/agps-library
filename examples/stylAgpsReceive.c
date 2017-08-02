@@ -15,51 +15,50 @@
 #include <unistd.h>
 #include <signal.h>
 #include <fcntl.h>
-#include "stylagps.h"
+#include "common.h"
 
 static int run = 1;
 
 void HandleSignal(int sig);
 
-int main(int argc, const char * argv[]) {
-        
-        double longitude = 0;
-        double latitude = 0;
-        double accuracy = 0;
-        int ret = 0;
-	int fd = 0;
-	char space = 0;
-        
-        printf("Version: %s\n", GetVersion());
-        
-        signal(SIGINT, HandleSignal);
+int main(int argc, const char * argv[])
+{
 
-	while(run)
+    double longitude = 0;
+    double latitude = 0;
+    double accuracy = 0;
+    int ret = 0;
+    int fd = 0;
+    char space = 0;
+
+    signal(SIGINT, HandleSignal);
+
+    while(run)
+    {
+        fd = open(AGPS_DATA_FILE, O_RDONLY);
+        if(fd > 0)
         {
-		fd = open(AGPS_DATA_FILE, O_RDONLY);
-		if(fd > 0)
-		{
-			read(fd, &longitude, sizeof(longitude));
-			read(fd, &space, 1);
-			read(fd, &latitude, sizeof(latitude));
-			read(fd, &space, 1);
-			read(fd, &accuracy, sizeof(accuracy));
-			close(fd);
-			remove(AGPS_DATA_FILE);
+            read(fd, &longitude, sizeof(longitude));
+            read(fd, &space, 1);
+            read(fd, &latitude, sizeof(latitude));
+            read(fd, &space, 1);
+            read(fd, &accuracy, sizeof(accuracy));
+            close(fd);
+            remove(AGPS_DATA_FILE);
 
-			printf("RECEIVE [Lng: %f\tLat: %f\tAcc: %f]\n", longitude, latitude, accuracy);
-		}
-                usleep(3000000);
-	}
+            printf("RECEIVE [Lng: %f\tLat: %f\tAcc: %f]\n", longitude, latitude, accuracy);
+        }
+        usleep(AGPS_FREQ_SEC);
+    }
 
-        return ret;
+    return ret;
 }
 
 void HandleSignal(int sig)
 {
-        if (sig == SIGINT)
-        {
-                printf("Stop stylagps_demo. Thank you for using STYL demos!\n");
-                run = 0;
-        }
+    if (sig == SIGINT)
+    {
+        printf("Stop stylagps_demo. Thank you for using STYL demos!\n");
+        run = 0;
+    }
 }

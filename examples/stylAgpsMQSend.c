@@ -19,6 +19,8 @@
 #include <sys/types.h>
 #include <mqueue.h>
 #include <string.h>
+#include <glib.h>
+#include <glib-object.h>
 #include "stylagps.h"
 #include "common.h"
 
@@ -28,84 +30,61 @@ static int run = 1;
 
 void HandleSignal(int sig);
 
-int main(int argc, const char * argv[]) {
-        
-        double longitude = 0;
-        double latitude = 0;
-        double accuracy = 0;
-        int ret = 0;
-	int fd = 0;
-	int msgLength = 0;
-	mqd_t mq;
-	char buffer[MAX_SIZE];
-        char confBuffer[BUFFER_LEN];
-	char tmp[20];
-        node_t paramDict[MAX_PARAM_NODE];
-        unsigned long updateFrequency = 0;
-        
-	mq = mq_open(AGPS_QUEUE_NAME, O_WRONLY);
-	CHECK((mqd_t)-1 != mq);
-        memset(buffer, '\0', sizeof(buffer));
-        memset(tmp, '\0', sizeof(tmp));
+int main(int argc, const char * argv[])
+{
 
-        printf("Version: %s\n", GetVersion());
+    double longitude = 0;
+    double latitude = 0;
+    double accuracy = 0;
+    int ret = 0;
+    int fd = 0;
+    int msgLength = 0;
+    mqd_t mq;
 
-        /* Read stylagps.conf */
-        ret = ReadFile(CONFIG_FILE, confBuffer);
-        if (ret)
+    char buffer[MAX_SIZE];
+
+    mq = mq_open(AGPS_QUEUE_NAME, O_WRONLY);
+
+    CHECK((mqd_t)-1 != mq);
+
+    memset(buffer, '\0', sizeof(buffer));
+
+    printf("Version: %s\n", StylAgpsGetVersion());
+
+    signal(SIGINT, HandleSignal);
+
+    GObject * nm_client = StylAgpsInit();
+
+    while(run)
+    {
+
+        ret = StylAgpsGetLocation(nm_client, &latitude, &longitude, &accuracy);
+
+        if (EXIT_SUCCESS == ret)
         {
-                printf("ERROR: %s: line %d\n", __func__, __LINE__);
-		goto SKIP_CONFIG;
+            sprintf(buffer, "%lf %lf %lf", longitude, latitude, accuracy);
+            msgLength = strnlen(buffer, MAX_SIZE);
+            mq_send(mq, buffer, msgLength, 0);
+            printf("stylAgpsMQSend (Lng Lat Acc): %s\n", buffer);
+            memset(buffer, '\0', msgLength);
         }
+        usleep(AGPS_FREQ_SEC);
+    }
 
-        ret = ParseConfig(confBuffer, sizeof(confBuffer), paramDict);
-        if (ret <= 0)
-        {
-                printf("ERROR: No param found. Please check /etc/stylagps/stylagps.conf");
-		goto SKIP_CONFIG;
-        }
+    /* cleanup */
+    CHECK((mqd_t)-1 != mq_close(mq));
+    CHECK((mqd_t)-1 != mq_unlink(QUEUE_NAME))
 
-        /* Read usec of update frequency from CONFIG_FILE */
-        ret = GetValueFromKey(paramDict, "agpsUpdateFrequencyUSec", tmp);
-        if (ret)
-        {
-                printf("agpsUpdateFrequencyUSec is not found in %s. Using default frequency of 3s\n", CONFIG_FILE);
-                updateFrequency = DEFAULT_UPDATE_FREQUENCY_USEC;
-        }
-	else
-	{
-		updateFrequency = atoi(tmp);
-		printf("Using update frequency of %d in %s\n", updateFrequency, CONFIG_FILE);
-	}
+    StylAgpsFinalize(nm_client);
 
-SKIP_CONFIG:
-
-        signal(SIGINT, HandleSignal);
-        while(run)
-        {
-                
-		ret = StylAgpsGetLocation(&longitude, &latitude, &accuracy);
-		if (EXIT_SUCCESS == ret)
-		{
-			sprintf(buffer, "%lf %lf %lf", longitude, latitude, accuracy);
-			msgLength = strnlen(buffer, MAX_SIZE);
-			mq_send(mq, buffer, msgLength, 0);
-			printf("stylAgpsMQSend (Lng Lat Acc): %s\n", buffer);
-			memset(buffer, '\0', msgLength);
-		}
-                usleep(updateFrequency);
-        }
-
-	CHECK((mqd_t)-1 != mq_close(mq));
-
-        return ret;
+    return ret;
 }
 
 void HandleSignal(int sig)
 {
-        if (sig == SIGINT)
-        {
-                printf("Stop stylagps_demo. Thank you for using STYL demos!\n");
-                run = 0;
-        }
+    if (sig == SIGINT)
+    {
+        printf("Stop stylagps_demo. Thank you for using STYL demos!\n");
+        run = 0;
+    }
 }

@@ -97,6 +97,8 @@ gint main(int argc, const char * argv[])
 
     GObject * nm_client = StylAgpsInit();
 
+    printf("Version: %s\n", StylAgpsGetVersion());
+
     g_return_val_if_fail(nm_client, EXIT_FAILURE);
 
     printf("\n\n======================================================================\n\n");
