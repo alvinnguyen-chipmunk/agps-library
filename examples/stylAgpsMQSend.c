@@ -73,7 +73,7 @@ int main(int argc, const char * argv[])
 
     /* cleanup */
     CHECK((mqd_t)-1 != mq_close(mq));
-    CHECK((mqd_t)-1 != mq_unlink(QUEUE_NAME))
+    CHECK((mqd_t)-1 != mq_unlink(QUEUE_NAME));
 
     StylAgpsFinalize(nm_client);
 
