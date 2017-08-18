@@ -43,7 +43,7 @@ int main(int argc, const char * argv[])
 
     char buffer[MAX_SIZE];
 
-    mq = mq_open(AGPS_QUEUE_NAME, O_WRONLY);
+    mq = mq_open(AGPS_QUEUE_NAME, O_WRONLY | O_CREAT);
 
     CHECK((mqd_t)-1 != mq);
 
