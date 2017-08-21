@@ -6,7 +6,7 @@ DEBUG_CFLAGS = -D__RELEASE__
 endif
 
 stylagps_datadir = /etc/stylagps
-STYLAGPS_includedir = $(includedir)/libstylagps
+STYLAGPS_includedir = $(includedir)/styl
 STYLAGPS_SOURCES = 					\
                 styl_agps_utils.h styl_agps_utils.c     \
                 styl_agps_json.h styl_agps_json.c       \

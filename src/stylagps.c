@@ -24,14 +24,14 @@ extern "C"
 
 static gchar * DATA_FILE = NULL;
 
-gint StylAgpsGetLocation(GObject * nm_device, gdouble *latitude, gdouble *longitude, gdouble *accuracy)
+gint StylAgpsGetLocation(GObject * nm_client, gdouble *latitude, gdouble *longitude, gdouble *accuracy)
 {
     gchar       *json_string    = NULL;
     GHashTable  *param_table    = NULL;
     gchar       *http_data      = NULL;
     gint        ret             = EXIT_FAILURE;
 
-    g_return_val_if_fail(nm_device, EXIT_FAILURE);
+    g_return_val_if_fail(nm_client, EXIT_FAILURE);
 
     /* **************************** Read and parse configure file ********************************* */
     param_table = styl_agps_param_new(DATA_FILE);
@@ -41,7 +41,7 @@ gint StylAgpsGetLocation(GObject * nm_device, gdouble *latitude, gdouble *longit
         STYL_DEBUG("Parameter pares was success!");
 
         /* ================== Create J-son String consist list Access Point ======================= */
-        json_string = styl_agps_json_new(nm_device);
+        json_string = styl_agps_json_new(nm_client);
 
         if(json_string)
         {
@@ -82,16 +82,17 @@ GObject * StylAgpsInit()
     return (GObject *)(nm_client);
 }
 
-void StylAgpsFinalize(GObject * nm_device)
+void StylAgpsFinalize(GObject * nm_client)
 {
     g_free(DATA_FILE);
-    styl_agps_nm_free_all(nm_device);
+    styl_agps_nm_free_all(nm_client);
 }
 
-gchar * StylAgpsGetVersion(void)
+const gchar * StylAgpsGetVersion(void)
 {
-        return VERSION;
+        return (const gchar*) VERSION;
 }
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

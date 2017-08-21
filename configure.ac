@@ -1,4 +1,4 @@
-AC_INIT([libstylagps], [2.0.0])
+AC_INIT([stylagps library], [2.0.0])
 AC_CONFIG_SRCDIR([configure.ac])
 
 dnl Must come before AM_INIT_AUTOMAKE.
@@ -86,7 +86,7 @@ AM_CONDITIONAL([DEBUG], [test x$debug = xtrue])
 
 AC_CONFIG_FILES([ Makefile src/Makefile examples/Makefile])
 
-AC_OUTPUT([ libstylagps.pc data/stylagps.conf])
+AC_OUTPUT([ stylagps.pc data/stylagps.conf])
 
 dnl ================================================================
 

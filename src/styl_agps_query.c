@@ -115,6 +115,7 @@ gchar * styl_agps_query_exec(gchar * json_string, GHashTable * param_table)
         {
             g_free(pcurl_reponse_data);
             pcurl_reponse_data=NULL;
+            STYL_ERROR("Can't get from %s", curl_url);
         }
     }
 
