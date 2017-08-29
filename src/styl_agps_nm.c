@@ -27,12 +27,12 @@ static void styl_agps_nm_device_wifi_request_scan_simple_callback (NMDeviceWifi 
         char *err_text = g_strdup_printf ("(%d) %s", error->code,
                                           error->message ? error->message : "Unknown error");
 
-        g_warning ("%s: %s", text, err_text);
+        STYL_DEBUG ("%s: %s", text, err_text);
         g_free (err_text);
     }
     else
     {
-        g_message("Scanning completed.");
+        STYL_DEBUG("Scanning completed.");
     }
 
     g_main_loop_quit (loop);
