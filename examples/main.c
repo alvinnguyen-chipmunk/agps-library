@@ -97,33 +97,34 @@ gint main(int argc, const char * argv[])
 
     GObject * nm_client = StylAgpsInit();
 
-    printf("Version: %s\n", StylAgpsGetVersion());
+    printf(" \x1b[35m ** Version: %s ** \x1b[0m \n", StylAgpsGetVersion());
 
     g_return_val_if_fail(nm_client, EXIT_FAILURE);
 
-    printf("\n\n======================================================================\n\n");
+    printf("\n \x1b[32m ************************************ \x1b[0m \n");
 
     while(LOOP_COUNT)
     {
         if(run==0)
             break;
 
-        g_message("Running [%d]...", LOOP_COUNT);
+        printf(" \x1b[33m Running [#%d]... \x1b[0m \n", LOOP_COUNT);
 
         ret = StylAgpsGetLocation(nm_client, &latitude, &longitude, &accuracy);
 
         if (EXIT_SUCCESS == ret)
         {
-            g_message(" => Response: \n    Latitude: %.8f Longitude: %.8f Accuracy: %.8f\t\n", latitude, longitude, accuracy);
+            printf(" \x1b[34m => AGPS: \n        Latitude: %.8f Longitude: %.8f Accuracy: %.8f \x1b[0m \t\n",
+                       latitude, longitude, accuracy);
         }
         else
         {
-            g_warning("Cannot query locaion. Retry with debug option to get more information.");
+            printf(" \x1b[31m Cannot query locaion. Retry with debug option to get more information. \x1b[0m");
         }
         sleep(TIME_SLEEP);
         LOOP_COUNT--;
 
-        printf("\n\n======================================================================\n\n");
+        printf("\n \x1b[32m ************************************ \x1b[0m \n");
     }
 
     StylAgpsFinalize(nm_client);

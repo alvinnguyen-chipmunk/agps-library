@@ -65,7 +65,7 @@ DBUS_GLIB_1_VERSION=`$PKG_CONFIG --modversion ${dbus_glib_1_modules}`
 
 dnl ================================================================
 AC_ARG_ENABLE([yocto],
-[  --enable-yocto    Turn on debugging],
+[  --enable-yocto        navigation for stylagps.conf via recipe in yocto],
 [case "${enableval}" in
   yes) yocto=true ;;
   no)  yocto=false ;;
@@ -75,7 +75,7 @@ esac],[yocto=false])
 AM_CONDITIONAL([YOCTO], [test x$yocto = xtrue])
 
 AC_ARG_ENABLE([debug],
-[  --enable-debug    Turn on debugging],
+[  --enable-debug        enable print debug information to console],
 [case "${enableval}" in
   yes) debug=true ;;
   no)  debug=false ;;

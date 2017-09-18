@@ -101,21 +101,22 @@ gchar * styl_agps_query_exec(gchar * json_string, GHashTable * param_table)
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /* Run our HTTP GET command, capture the HTTP response code, and clean up. */
     res = curl_easy_perform(curl);
-    DEBUG_1("\n************** curl_reponse_data: %s", curl_reponse_data);
     if(res != CURLE_OK)
     {
-        fprintf(stderr, "curl_easy_perform() failed: %s\n",
-                curl_easy_strerror(res));
+        STYL_ERROR("curl_easy_perform() failed: %s", curl_easy_strerror(res));
+        STYL_ERROR("Please ensure for your internet connection.");
     }
     else
     {
         pcurl_reponse_data = g_strdup(curl_reponse_data);
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &curl_reponse_code);
+        STYL_WARNING("Response code: %d", curl_reponse_code);
         if(curl_reponse_code != 200)
         {
             g_free(pcurl_reponse_data);
             pcurl_reponse_data=NULL;
             STYL_ERROR("Can't get from %s", curl_url);
+            STYL_ERROR("Please check your GeoGoogle API key");
         }
     }
 
