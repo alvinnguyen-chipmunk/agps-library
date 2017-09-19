@@ -57,8 +57,9 @@ int main(int argc, const char * argv[])
         bytes_read = mq_receive(mq, buffer, MAX_SIZE, NULL);
         if (bytes_read > 0)
         {
-            sscanf(buffer, "%lf %lf %lf", &longitude, &latitude, &accuracy);
-            printf("RECEIVED from '%s' Lng: %f - Lat: %f - Acc: %f\n", AGPS_QUEUE_NAME, longitude, latitude, accuracy);
+            sscanf(buffer, "%lf %lf %lf",&longitude, &latitude, &accuracy);
+            printf("%s RECEIVED from '%s' Lng: %f - Lat: %f - Acc: %f %s\n",
+                   ANSI_COLOR_GREEN, AGPS_QUEUE_NAME, longitude, latitude, accuracy, ANSI_COLOR_RESET);
             memset(buffer, '\0', MAX_SIZE);
         }
         usleep(AGPS_FREQ_SEC);
@@ -75,7 +76,7 @@ void HandleSignal(int sig)
 {
     if (sig == SIGINT)
     {
-        printf("Stop stylagps_demo. Thank you for using STYL demos!\n");
+        printf("%s Stop stylagps_demo. Thank you for using STYL demos! %s\n", ANSI_COLOR_YELLOW, ANSI_COLOR_RESET);
         run = 0;
     }
 }

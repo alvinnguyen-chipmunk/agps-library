@@ -43,13 +43,15 @@ int main(int argc, const char * argv[])
 
     char buffer[MAX_SIZE];
 
-    mq = mq_open(AGPS_QUEUE_NAME, O_WRONLY);
+    struct mq_attr attr;
+
+    mq = mq_open(AGPS_QUEUE_NAME, O_RDWR);
 
     CHECK((mqd_t)-1 != mq);
 
     memset(buffer, '\0', sizeof(buffer));
 
-    printf("Version: %s\n", StylAgpsGetVersion());
+    printf("%s Version: %s %s\n", ANSI_COLOR_MAGENTA, StylAgpsGetVersion(), ANSI_COLOR_RESET);
 
     signal(SIGINT, HandleSignal);
 
@@ -57,15 +59,37 @@ int main(int argc, const char * argv[])
 
     while(run)
     {
+        if (mq_getattr(mq, &attr) == -1)
+        {
+            errExit("mq_getattr");
+        }
+
+        while(attr.mq_curmsgs)
+        {
+            ssize_t bytes_read;
+            bytes_read = mq_receive(mq, buffer, MAX_SIZE, NULL);
+            if (bytes_read > 0)
+            {
+                sscanf(buffer, "%lf %lf %lf", &longitude, &latitude, &accuracy);
+                printf("%s REMOVE from '%s' Lng: %f - Lat: %f - Acc: %f %s\n",
+                       ANSI_COLOR_RED, AGPS_QUEUE_NAME, longitude, latitude, accuracy, ANSI_COLOR_RESET);
+                attr.mq_curmsgs--;
+                memset(buffer, '\0', MAX_SIZE);
+            }
+        }
 
         ret = StylAgpsGetLocation(nm_client, &latitude, &longitude, &accuracy);
 
         if (EXIT_SUCCESS == ret)
         {
             sprintf(buffer, "%lf %lf %lf", longitude, latitude, accuracy);
+
             msgLength = strnlen(buffer, MAX_SIZE);
+
             mq_send(mq, buffer, msgLength, 0);
-            printf("stylAgpsMQSend (Lng Lat Acc): %s\n", buffer);
+
+            printf("%s stylAgpsMQSend (Lng Lat Acc): %s %s\n", ANSI_COLOR_GREEN, buffer, ANSI_COLOR_RESET);
+
             memset(buffer, '\0', msgLength);
         }
         usleep(AGPS_FREQ_SEC);
@@ -73,7 +97,6 @@ int main(int argc, const char * argv[])
 
     /* cleanup */
     CHECK((mqd_t)-1 != mq_close(mq));
-    CHECK((mqd_t)-1 != mq_unlink(QUEUE_NAME));
 
     StylAgpsFinalize(nm_client);
 
@@ -84,7 +107,7 @@ void HandleSignal(int sig)
 {
     if (sig == SIGINT)
     {
-        printf("Stop stylagps_demo. Thank you for using STYL demos!\n");
+        printf("%s Stop stylagps_demo. Thank you for using STYL demos! %s\n", ANSI_COLOR_YELLOW, ANSI_COLOR_RESET);
         run = 0;
     }
 }
