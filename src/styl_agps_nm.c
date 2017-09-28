@@ -91,13 +91,13 @@ GSList * styl_agps_nm_get_ap_list(GObject * nm_client)
             if(j==0)
             {
                 access_point_info = g_strdup_printf("    { \"macAddress\": \"%s\",\"signalStrength\": %d }",
-                                          nm_access_point_get_hw_address (access_point),
+                                          nm_access_point_get_bssid (access_point),
                                           ((guint)nm_access_point_get_strength (access_point))-110);
             }
             else
             {
                 access_point_info = g_strdup_printf(",    { \"macAddress\": \"%s\",\"signalStrength\": %d }",
-                                          nm_access_point_get_hw_address (access_point),
+                                          nm_access_point_get_bssid (access_point),
                                           ((guint)nm_access_point_get_strength (access_point))-110);
             }
             access_point_list = g_slist_append(access_point_list, (gpointer)access_point_info);

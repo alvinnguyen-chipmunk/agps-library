@@ -1,7 +1,28 @@
-AC_INIT([stylagps library], [2.0.0])
+AC_INIT([stylagps library], [2.0.0], [alvin.nguyen@styl.solutions])
 AC_CONFIG_SRCDIR([configure.ac])
 
+# Version information
+STYL_MAJOR_VERSION=2
+STYL_MINOR_VERSION=0
+STYL_MICRO_VERSION=0
+STYL_MICRO_VERSION_SUFFIX=
+STYL_VERSION=$STYL_MAJOR_VERSION.$STYL_MINOR_VERSION.$STYL_MICRO_VERSION$STYL_MICRO_VERSION_SUFFIX
+STYL_VERSION_INFO=`expr $STYL_MAJOR_VERSION + $STYL_MINOR_VERSION`:$STYL_MICRO_VERSION:$STYL_MINOR_VERSION
+STYL_VERSION_NUMBER=`expr $STYL_MAJOR_VERSION \* 10000 + $STYL_MINOR_VERSION \* 100 + $STYL_MICRO_VERSION`
+
+AC_SUBST(STYL_MAJOR_VERSION)
+AC_SUBST(STYL_MINOR_VERSION)
+AC_SUBST(STYL_MICRO_VERSION)
+AC_SUBST(STYL_VERSION)
+AC_SUBST(STYL_VERSION_INFO)
+AC_SUBST(STYL_VERSION_NUMBER)
+AC_SUBST(STYL_VERSION_EXTRA)
+
+VERSION=${STYL_VERSION}
+
 dnl Must come before AM_INIT_AUTOMAKE.
+
+# Auxiliary files go "build-aux" directory
 AC_CONFIG_AUX_DIR([build-aux])
 
 AM_INIT_AUTOMAKE([-Wall subdir-objects])
@@ -17,12 +38,15 @@ AC_PROG_LIBTOOL
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
+dnl ================================================================
+
 LT_INIT
 
 # Configure for libtool
 AM_PROG_LIBTOOL
 LIBTOOL="$LIBTOOL --silent"
 
+dnl ================================================================
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_OFF_T

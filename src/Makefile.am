@@ -18,12 +18,13 @@ STYLAGPS_SOURCES = 					\
 STYLAGPS_include_HEADERS = stylagps.h
 
 STYLAGPS_CFLAGS = -D__DATADIR__=\""$(stylagps_datadir)"\" 	\
-		$(DEBUG_CFLAGS) -std=c99 $(DBUS_GLIB_1_CFLAGS) 	\
+		-std=c99 -D_BSD_SOURCE -D_DEFAULT_SOURCE	\
+		$(DEBUG_CFLAGS) $(DBUS_GLIB_1_CFLAGS) 		\
 		$(LIBNM_GLIB_CFLAGS) $(GLIB_CFLAGS)		\
 		$(CURL_CFLAGS)
 
 STYLAGPS_LDFLAGS = $(DBUS_GLIB_1_LIBS) $(LIBNM_GLIB_LIBS) \
-		$(GLIB_LIBS) $(CURL_LIBS)
+		$(GLIB_LIBS) $(CURL_LIBS) -version-info @STYL_VERSION_INFO@
 
 
 ######################### STYL AGPS LIBTOOL LIBRARY ############################

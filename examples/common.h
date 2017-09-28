@@ -1,7 +1,6 @@
 #ifndef COMMON_H_
 #define COMMON_H_
 
-#define _BSD_SOURCE
 
 #define QUEUE_NAME  "/test_queue"
 #define MAX_SIZE    1024
