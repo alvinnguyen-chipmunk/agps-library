@@ -15,12 +15,12 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-#include "stylagps.h"
-#include "styl_agps_json.h"
-#include "styl_agps_utils.h"
-#include "styl_agps_query.h"
-#include "styl_agps_param.h"
-#include "styl_agps_nm.h"
+#include "mlsAgps.h"
+#include "mlsAgpsJson.h"
+#include "mlsAgpsUtils.h"
+#include "mlsAgpsQuery.h"
+#include "mlsAgpsParam.h"
+#include "mlsAgpsNM.h"
 
 static gchar * DATA_FILE = NULL;
 

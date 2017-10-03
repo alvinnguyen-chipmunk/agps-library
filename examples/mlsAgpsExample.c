@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 #include <unistd.h>
 #include <signal.h>
 
-#include "stylagps.h"
+#include <mlsAgps.h>
 
 #if 0
 #define USING_THREAD

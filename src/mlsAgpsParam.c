@@ -3,8 +3,8 @@
 #include <glib.h>
 #include <string.h>
 
-#include "styl_agps_param.h"
-#include "styl_agps_utils.h"
+#include "mlsAgpsParam.h"
+#include "mlsAgpsUtils.h"
 
 //////////////////////////////////////////////////////////////////////////////////////////
 

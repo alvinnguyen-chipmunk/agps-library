@@ -19,7 +19,7 @@
 #include <sys/types.h>
 #include <mqueue.h>
 #include <string.h>
-#include "common.h"
+#include "mlsAgpsExample_Common.h"
 
 static int run = 1;
 

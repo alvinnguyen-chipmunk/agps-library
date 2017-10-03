@@ -17,8 +17,8 @@
 #include <fcntl.h>
 #include <glib.h>
 #include <glib-object.h>
-#include "stylagps.h"
-#include "common.h"
+#include <mlsAgps.h>
+#include "mlsAgpsExample_Common.h"
 
 static int run = 1;
 

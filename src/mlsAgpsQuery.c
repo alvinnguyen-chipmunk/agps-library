@@ -4,9 +4,9 @@
 #include <curl/curl.h>
 #include <string.h>
 
-#include "styl_agps_query.h"
-#include "styl_agps_param.h"
-#include "styl_agps_utils.h"
+#include "mlsAgpsQuery.h"
+#include "mlsAgpsParam.h"
+#include "mlsAgpsUtils.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 

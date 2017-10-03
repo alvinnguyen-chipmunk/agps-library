@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <fcntl.h>
-#include "common.h"
+#include "mlsAgpsExample_Common.h"
 
 static int run = 1;
 
@@ -38,11 +38,12 @@ int main(int argc, const char * argv[])
         fd = open(AGPS_DATA_FILE, O_RDONLY);
         if(fd > 0)
         {
-            read(fd, &longitude, sizeof(longitude));
-            read(fd, &space, 1);
-            read(fd, &latitude, sizeof(latitude));
-            read(fd, &space, 1);
-            read(fd, &accuracy, sizeof(accuracy));
+            int retValue = read(fd, &longitude, sizeof(longitude));
+            retValue = read(fd, &space, 1);
+            retValue = read(fd, &latitude, sizeof(latitude));
+            retValue = read(fd, &space, 1);
+            retValue = read(fd, &accuracy, sizeof(accuracy));
+
             close(fd);
             remove(AGPS_DATA_FILE);
 
