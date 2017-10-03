@@ -7,15 +7,15 @@ endif
 
 stylagps_datadir = /etc/stylagps
 STYLAGPS_includedir = $(includedir)/styl
-STYLAGPS_SOURCES = 					\
-                styl_agps_utils.h styl_agps_utils.c     \
-                styl_agps_json.h styl_agps_json.c       \
-                styl_agps_param.h styl_agps_param.c     \
-                styl_agps_query.h styl_agps_query.c     \
-                styl_agps_nm.h styl_agps_nm.c           \
-                stylagps.h stylagps.c
+STYLAGPS_SOURCES =                                 \
+                mlsAgpsUtils.h  mlsAgpsUtils.c     \
+                mlsAgpsJson.h   mlsAgpsJson.c      \
+                mlsAgpsParam.h  mlsAgpsParam.c     \
+                mlsAgpsQuery.h  mlsAgpsQuery.c     \
+                mlsAgpsNM.h     mlsAgpsNM.c        \
+                mlsAgps.h       mlsAgps.c
 
-STYLAGPS_include_HEADERS = stylagps.h
+STYLAGPS_include_HEADERS = mlsAgps.h
 
 STYLAGPS_CFLAGS = -D__DATADIR__=\""$(stylagps_datadir)"\" 	\
 		-std=c99 -D_BSD_SOURCE -D_DEFAULT_SOURCE	\
