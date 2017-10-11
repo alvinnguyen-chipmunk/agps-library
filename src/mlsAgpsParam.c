@@ -1,3 +1,29 @@
+/*******************************************************************************
+ *  (C) Copyright 2009 STYL Solutions Co., Ltd. , All rights reserved          *
+ *                                                                             *
+ *  This source code and any compilation or derivative thereof is the sole     *
+ *  property of STYL Solutions Co., Ltd. and is provided pursuant to a         *
+ *  Software License Agreement.  This code is the proprietary information      *
+ *  of STYL Solutions Co., Ltd and is confidential in nature.  Its use and     *
+ *  dissemination by any party other than STYL Solutions Co., Ltd is           *
+ *  strictly limited by the confidential information provisions of the         *
+ *  Agreement referenced above.                                                *
+ ******************************************************************************/
+/**
+ * @file    mlsAgpsParam.c
+ * @brief   C code - Implement parameter processing of A-GPS feature.
+ *
+ * Long description.
+ * @date    10/10/2017
+ * @author  Alvin Nguyen - alvin.nguyen@styl.solutions
+ */
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+/********** Include section ***************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <glib.h>
@@ -6,13 +32,29 @@
 #include "mlsAgpsParam.h"
 #include "mlsAgpsUtils.h"
 
-//////////////////////////////////////////////////////////////////////////////////////////
-
+/********** Local Constant and compile switch definition section **************/
+/********** Local Type definition section *************************************/
+/********** Local Macro definition section ************************************/
+/********** Local (static) variable definition ********************************/
+/********** Local (static) function declaration section ***********************/
 static void styl_agps_param_print_core(gpointer key, gpointer value, gpointer userdata);
 static void styl_agps_param_free_core(gpointer key, gpointer value, gpointer userdata);
 
-//////////////////////////////////////////////////////////////////////////////////////////
+/********** Local function definition section *********************************/
+static void styl_agps_param_print_core(gpointer key, gpointer value, gpointer userdata)
+{
+    g_message("\n   Key: %s\n   Value: %s\n", (gchar *)key, (gchar *)value);
+}
 
+static void styl_agps_param_free_core(gpointer key, gpointer value, gpointer userdata)
+{
+    g_free((gchar *)key);
+    g_free((gchar *)value);
+    key=NULL;
+    value=NULL;
+}
+
+/********** Global function definition section ********************************/
 GHashTable * styl_agps_param_new(const gchar* filename)
 {
     FILE *fp = NULL;
@@ -67,19 +109,6 @@ void styl_agps_param_print(GHashTable * param_table)
         g_error("\nParameter is null.");
 }
 
-static void styl_agps_param_print_core(gpointer key, gpointer value, gpointer userdata)
-{
-    g_message("\n   Key: %s\n   Value: %s\n", (gchar *)key, (gchar *)value);
-}
-
-static void styl_agps_param_free_core(gpointer key, gpointer value, gpointer userdata)
-{
-    g_free((gchar *)key);
-    g_free((gchar *)value);
-    key=NULL;
-    value=NULL;
-}
-
 gchar * styl_agps_param_key_to_value(GHashTable * param_table, gchar * keyword)
 {
     gchar * value = NULL;
@@ -89,3 +118,8 @@ gchar * styl_agps_param_key_to_value(GHashTable * param_table, gchar * keyword)
     }
     return NULL;
 }
+
+#ifdef __cplusplus
+}
+#endif
+/*@}*/

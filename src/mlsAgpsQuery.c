@@ -1,3 +1,29 @@
+/*******************************************************************************
+ *  (C) Copyright 2009 STYL Solutions Co., Ltd. , All rights reserved          *
+ *                                                                             *
+ *  This source code and any compilation or derivative thereof is the sole     *
+ *  property of STYL Solutions Co., Ltd. and is provided pursuant to a         *
+ *  Software License Agreement.  This code is the proprietary information      *
+ *  of STYL Solutions Co., Ltd and is confidential in nature.  Its use and     *
+ *  dissemination by any party other than STYL Solutions Co., Ltd is           *
+ *  strictly limited by the confidential information provisions of the         *
+ *  Agreement referenced above.                                                *
+ ******************************************************************************/
+/**
+ * @file    mlsAgpsQuery.c
+ * @brief   C code - Implement Query location processing of A-GPS feature.
+ *
+ * Long description.
+ * @date    10/10/2017
+ * @author  Alvin Nguyen - alvin.nguyen@styl.solutions
+ */
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+/********** Include section ***************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <glib.h>
@@ -8,12 +34,28 @@
 #include "mlsAgpsParam.h"
 #include "mlsAgpsUtils.h"
 
-////////////////////////////////////////////////////////////////////////////////////////////////
-
+/********** Local Constant and compile switch definition section **************/
+/********** Local Type definition section *************************************/
+/********** Local Macro definition section ************************************/
+/********** Local (static) variable definition ********************************/
+/********** Local (static) function declaration section ***********************/
 static size_t styl_agps_query_back_write(void *contents, size_t size, size_t nmemb, void *userp);
 
-////////////////////////////////////////////////////////////////////////////////////////////////
+/********** Local function definition section *********************************/
+static size_t styl_agps_query_back_write(void *contents, size_t size, size_t nmemb, void * userp)
+{
+    gsize realsize = size * nmemb;
+    if(realsize > 0)
+    {
+        if(realsize < 1024)
+            g_strlcpy((gchar *)userp, (gchar *)contents, realsize);
+        else
+            return 0;
+    }
+    return realsize;
+}
 
+/********** Global function definition section ********************************/
 gchar * styl_agps_query_exec(gchar * json_string, GHashTable * param_table)
 {
     struct curl_slist *     curl_headers        = NULL;
@@ -130,15 +172,7 @@ gchar * styl_agps_query_exec(gchar * json_string, GHashTable * param_table)
     return pcurl_reponse_data;
 }
 
-static size_t styl_agps_query_back_write(void *contents, size_t size, size_t nmemb, void * userp)
-{
-    gsize realsize = size * nmemb;
-    if(realsize > 0)
-    {
-        if(realsize < 1024)
-            g_strlcpy((gchar *)userp, (gchar *)contents, realsize);
-        else
-            return 0;
-    }
-    return realsize;
+#ifdef __cplusplus
 }
+#endif
+/*@}*/

@@ -1,20 +1,29 @@
 /*******************************************************************************
- (C) Copyright 2009 Styl Solutions Co., Ltd. , All rights reserved *
- *
- This source code and any compilation or derivative thereof is the sole *
- property of Styl Solutions Co., Ltd. and is provided pursuant to a *
- Software License Agreement. This code is the proprietary information *
- of Styl Solutions Co., Ltd and is confidential in nature. Its use and *
- dissemination by any party other than Styl Solutions Co., Ltd is *
- strictly limited by the confidential information provisions of the *
- Agreement referenced above. *
+ *  (C) Copyright 2009 STYL Solutions Co., Ltd. , All rights reserved          *
+ *                                                                             *
+ *  This source code and any compilation or derivative thereof is the sole     *
+ *  property of STYL Solutions Co., Ltd. and is provided pursuant to a         *
+ *  Software License Agreement.  This code is the proprietary information      *
+ *  of STYL Solutions Co., Ltd and is confidential in nature.  Its use and     *
+ *  dissemination by any party other than STYL Solutions Co., Ltd is           *
+ *  strictly limited by the confidential information provisions of the         *
+ *  Agreement referenced above.                                                *
  ******************************************************************************/
+/**
+ * @file    mlsAgps.c
+ * @brief   C code - Implement A-GPS feature.
+ *
+ * Long description.
+ * @date    10/10/2017
+ * @author  Alvin Nguyen - alvin.nguyen@styl.solutions
+ */
 
 #ifdef __cplusplus
 extern "C"
 {
-#endif /* __cplusplus */
+#endif
 
+/********** Include section ***************************************************/
 #include "mlsAgps.h"
 #include "mlsAgpsJson.h"
 #include "mlsAgpsUtils.h"
@@ -22,8 +31,15 @@ extern "C"
 #include "mlsAgpsParam.h"
 #include "mlsAgpsNM.h"
 
+/********** Local Constant and compile switch definition section **************/
+/********** Local Type definition section *************************************/
+/********** Local Macro definition section ************************************/
+/********** Local (static) variable definition ********************************/
 static gchar * DATA_FILE = NULL;
 
+/********** Local (static) function declaration section ***********************/
+/********** Local function definition section *********************************/
+/********** Global function definition section ********************************/
 gint StylAgpsGetLocation(GObject * nm_client, gdouble *latitude, gdouble *longitude, gdouble *accuracy)
 {
     gchar       *json_string    = NULL;
@@ -95,4 +111,5 @@ const gchar * StylAgpsGetVersion(void)
 
 #ifdef __cplusplus
 }
-#endif /* __cplusplus */
+#endif
+/*@}*/

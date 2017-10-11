@@ -1,19 +1,49 @@
+/*******************************************************************************
+ *  (C) Copyright 2009 STYL Solutions Co., Ltd. , All rights reserved          *
+ *                                                                             *
+ *  This source code and any compilation or derivative thereof is the sole     *
+ *  property of STYL Solutions Co., Ltd. and is provided pursuant to a         *
+ *  Software License Agreement.  This code is the proprietary information      *
+ *  of STYL Solutions Co., Ltd and is confidential in nature.  Its use and     *
+ *  dissemination by any party other than STYL Solutions Co., Ltd is           *
+ *  strictly limited by the confidential information provisions of the         *
+ *  Agreement referenced above.                                                *
+ ******************************************************************************/
+/**
+ * @file    mlsAgpsNM.c
+ * @brief   C code - Implement NetworkManager processing of A-GPS feature.
+ *
+ * Long description.
+ * @date    10/10/2017
+ * @author  Alvin Nguyen - alvin.nguyen@styl.solutions
+ */
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+/********** Include section ***************************************************/
 #include "mlsAgpsUtils.h"
 #include "mlsAgpsNM.h"
 
-////////////////////////////////////////////////////////////////////////////
-
+/********** Local Constant and compile switch definition section **************/
+/********** Local Type definition section *************************************/
+/********** Local Macro definition section ************************************/
+/********** Local (static) variable definition ********************************/
 GMainLoop *loop = NULL;
 
-
+/********** Local (static) function declaration section ***********************/
 static void styl_agps_nm_free_ap_list_fnc(gpointer data);
-static void styl_agps_nm_print_ap_list(gpointer data, gpointer userdata);
 static void styl_agps_nm_device_wifi_request_scan_simple_callback (NMDeviceWifi *device,
                                                                     GError *error,
                                                                     gpointer user_data);
-static void * styl_agps_nm_device_wifi_scan_completed(gpointer data);
 
-////////////////////////////////////////////////////////////////////////////
+/********** Local function definition section *********************************/
+static void styl_agps_nm_free_ap_list_fnc(gpointer data)
+{
+    g_free((gchar *) data);
+}
 
 static void styl_agps_nm_device_wifi_request_scan_simple_callback (NMDeviceWifi *device,
                                                                     GError *error,
@@ -37,6 +67,7 @@ static void styl_agps_nm_device_wifi_request_scan_simple_callback (NMDeviceWifi 
     g_main_loop_quit (loop);
 }
 
+/********** Global function definition section ********************************/
 void styl_agps_nm_free_all(GObject *nm_client)
 {
     g_object_unref (nm_client);
@@ -111,8 +142,8 @@ void styl_agps_nm_free_ap_list(GSList * access_point_list)
     g_slist_free_full(access_point_list, styl_agps_nm_free_ap_list_fnc);
 }
 
-static void styl_agps_nm_free_ap_list_fnc(gpointer data)
-{
-    g_free((gchar *) data);
+#ifdef __cplusplus
 }
+#endif
+/*@}*/
 

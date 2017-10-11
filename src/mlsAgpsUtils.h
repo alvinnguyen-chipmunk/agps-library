@@ -1,6 +1,39 @@
-#ifndef STYL_AGPS_UTILS_H_INCLUDED
-#define STYL_AGPS_UTILS_H_INCLUDED
+/*******************************************************************************
+ *  (C) Copyright 2009 STYL Solutions Co., Ltd. , All rights reserved          *
+ *                                                                             *
+ *  This source code and any compilation or derivative thereof is the sole     *
+ *  property of STYL Solutions Co., Ltd. and is provided pursuant to a         *
+ *  Software License Agreement.  This code is the proprietary information      *
+ *  of STYL Solutions Co., Ltd and is confidential in nature.  Its use and     *
+ *  dissemination by any party other than STYL Solutions Co., Ltd is           *
+ *  strictly limited by the confidential information provisions of the         *
+ *  Agreement referenced above.                                                *
+ ******************************************************************************/
+/**
+ * @file    mlsAgpsUtils.h
+ * @brief   C code - Implement some utils of A-GPS feature.
+ *
+ * Long description.
+ * @date    10/10/2017
+ * @author  Alvin Nguyen - alvin.nguyen@styl.solutions
+ */
 
+#ifndef MLSAGPSUTILS_H_INCLUDED
+#define MLSAGPSUTILS_H_INCLUDED
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+/********** Include section ***************************************************/
+#include <stdio.h>
+#include <stdlib.h>
+#include <glib.h>
+#include <string.h>
+
+/********** Constant and compile switch definition section ********************/
+/********** Type definition section *******************************************/
+/********** Macro definition section*******************************************/
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
 #define ANSI_COLOR_YELLOW  "\x1b[33m"
@@ -49,12 +82,12 @@
 #define STYL_INFO_INLINE(format, ...) __INFO__("%s" format "%s", ANSI_COLOR_GREEN, ##__VA_ARGS__, ANSI_COLOR_GREEN)
 #define STYL_INFO_OTHER(format, ...) __INFO__("%s" format "%s", ANSI_COLOR_BLUE, ##__VA_ARGS__, ANSI_COLOR_BLUE)
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <glib.h>
-#include <string.h>
-
+/********** Function declaration section **************************************/
 gint styl_agps_utils_data_parse(gchar *data,
                                 gdouble **longitude, gdouble **latitude, gdouble **accuracy);
 
-#endif // STYL_AGPS_UTILS_H_INCLUDED
+#ifdef __cplusplus
+}
+#endif
+#endif // MLSAGPSUTILS_H_INCLUDED
+/*@}*/
