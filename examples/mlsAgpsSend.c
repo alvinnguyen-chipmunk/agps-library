@@ -64,11 +64,11 @@ int main(int argc, const char * argv[])
     int ret = 0;
     int fd = 0;
 
-    printf("Version: %s\n", StylAgpsGetVersion());
+    printf("Version: %s\n", mlsAgps_GetVersion());
 
     signal(SIGINT, HandleSignal);
 
-    GObject * nm_client = StylAgpsInit();
+    GObject * nm_client = mlsAgps_Init();
 
     while(run)
     {
@@ -76,7 +76,7 @@ int main(int argc, const char * argv[])
         fd = open(AGPS_DATA_FILE, O_WRONLY | O_CREAT | O_EXCL | O_NOCTTY | O_SYNC, 0777);
         if(fd > 0)
         {
-            ret = StylAgpsGetLocation(nm_client, &latitude, &longitude, &accuracy);
+            ret = mlsAgps_GetLocation(nm_client, &latitude, &longitude, &accuracy);
             if (EXIT_SUCCESS == ret)
             {
                 int tmp;
@@ -93,7 +93,7 @@ int main(int argc, const char * argv[])
         usleep(AGPS_FREQ_SEC);
     }
 
-    StylAgpsFinalize(nm_client);
+    mlsAgps_Finalize(nm_client);
 
     return ret;
 }

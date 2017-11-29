@@ -37,13 +37,13 @@ extern "C"
 #define DATA_NAME "stylagps.conf"
 
 /********** Function declaration section **************************************/
-gint            StylAgpsGetLocation(GObject * nm_client, gdouble *latitude, gdouble *longitude, gdouble *accuracy);
+gint            mlsAgps_GetLocation(GObject * nm_client, gdouble *latitude, gdouble *longitude, gdouble *accuracy);
 
-GObject *       StylAgpsInit();
+GObject *       mlsAgps_Init();
 
-void            StylAgpsFinalize(GObject * nm_client);
+void            mlsAgps_Finalize(GObject * nm_client);
 
-const gchar *   StylAgpsGetVersion(void);
+const gchar *   mlsAgps_GetVersion(void);
 
 #ifdef __cplusplus
 }

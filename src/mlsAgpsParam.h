@@ -31,20 +31,20 @@ extern "C"
 /********** Macro definition section*******************************************/
 #define PARAM_NUMBER            4
 
-#define STYL_AGPS_PARAM_TIMEOUT           "googleRequestTimeoutSec"
-#define STYL_AGPS_PARAM_TIMEOUT_DEFAULT   10
-#define STYL_AGPS_PARAM_URL               "geoLocationURL"
-#define STYL_AGPS_PARAM_KEY               "keyAPI"
-#define STYL_AGPS_FREQ_USEC               "agpsUpdateFrequencyUSec"
+#define MLS_AGPS_PARAM_TIMEOUT           "googleRequestTimeoutSec"
+#define MLS_AGPS_PARAM_TIMEOUT_DEFAULT   10
+#define MLS_AGPS_PARAM_URL               "geoLocationURL"
+#define MLS_AGPS_PARAM_KEY               "keyAPI"
+#define MLS_AGPS_FREQ_USEC               "agpsUpdateFrequencyUSec"
 
 /********** Function declaration section **************************************/
-GHashTable *    styl_agps_param_new(const gchar* filename);
+GHashTable *    mlsAgpsParam_New(const gchar* filename);
 
-void            styl_agps_param_free(GHashTable * param_table);
+void            mlsAgpsParam_Free(GHashTable * param_table);
 
-void            styl_agps_param_print(GHashTable * param_table);
+void            mlsAgpsParam_Print(GHashTable * param_table);
 
-gchar *         styl_agps_param_key_to_value(GHashTable * param_table, gchar * keyword);
+gchar *         mlsAgpsParam_Key2Value(GHashTable * param_table, gchar * keyword);
 
 #ifdef __cplusplus
 }

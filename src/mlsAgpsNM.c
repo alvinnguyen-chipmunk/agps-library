@@ -34,18 +34,18 @@ extern "C"
 GMainLoop *loop = NULL;
 
 /********** Local (static) function declaration section ***********************/
-static void styl_agps_nm_free_ap_list_fnc(gpointer data);
-static void styl_agps_nm_device_wifi_request_scan_simple_callback (NMDeviceWifi *device,
+static void mlsAgpsNM_FreeAPList_fnc(gpointer data);
+static void mlsAgpsNM_WifiScan_Callback (NMDeviceWifi *device,
                                                                     GError *error,
                                                                     gpointer user_data);
 
 /********** Local function definition section *********************************/
-static void styl_agps_nm_free_ap_list_fnc(gpointer data)
+static void mlsAgpsNM_FreeAPList_fnc(gpointer data)
 {
     g_free((gchar *) data);
 }
 
-static void styl_agps_nm_device_wifi_request_scan_simple_callback (NMDeviceWifi *device,
+static void mlsAgpsNM_WifiScan_Callback (NMDeviceWifi *device,
                                                                     GError *error,
                                                                     gpointer user_data)
 {
@@ -68,13 +68,13 @@ static void styl_agps_nm_device_wifi_request_scan_simple_callback (NMDeviceWifi 
 }
 
 /********** Global function definition section ********************************/
-void styl_agps_nm_free_all(GObject *nm_client)
+void mlsAgpsNM_FreeAll(GObject *nm_client)
 {
     g_object_unref (nm_client);
 }
 
 
-NMClient * styl_agps_nm_get_nm_client()
+NMClient * mlsAgpsNM_GetNMClient()
 {
     NMClient * nm_client = NULL;
 
@@ -84,7 +84,7 @@ NMClient * styl_agps_nm_get_nm_client()
     return nm_client;
 }
 
-GSList * styl_agps_nm_get_ap_list(GObject * nm_client)
+GSList * mlsAgpsNM_GetAPList(GObject * nm_client)
 {
     const GPtrArray *devices;
     const GPtrArray *access_points;
@@ -107,7 +107,7 @@ GSList * styl_agps_nm_get_ap_list(GObject * nm_client)
     if(nm_device!=NULL)
     {
         nm_device_wifi_request_scan_simple(NM_DEVICE_WIFI (nm_device),
-                                           styl_agps_nm_device_wifi_request_scan_simple_callback, NULL);
+                                           mlsAgpsNM_WifiScan_Callback, NULL);
         loop = g_main_loop_new (NULL, FALSE);  /* Create main loop */
         g_main_loop_run (loop);                /* Run main loop until scan done! */
         g_main_loop_unref (loop);
@@ -137,9 +137,9 @@ GSList * styl_agps_nm_get_ap_list(GObject * nm_client)
     return access_point_list;
 }
 
-void styl_agps_nm_free_ap_list(GSList * access_point_list)
+void mlsAgpsNM_FreeAPList(GSList * access_point_list)
 {
-    g_slist_free_full(access_point_list, styl_agps_nm_free_ap_list_fnc);
+    g_slist_free_full(access_point_list, mlsAgpsNM_FreeAPList_fnc);
 }
 
 #ifdef __cplusplus

@@ -35,13 +35,13 @@ extern "C"
 /********** Type definition section *******************************************/
 /********** Macro definition section*******************************************/
 /********** Function declaration section **************************************/
-NMClient *      styl_agps_nm_get_nm_client();
+NMClient *      mlsAgpsNM_GetNMClient();
 
-GSList *        styl_agps_nm_get_ap_list(GObject * nm_client);
+GSList *        mlsAgpsNM_GetAPList(GObject * nm_client);
 
-void            styl_agps_nm_free_ap_list(GSList * access_point_list);
+void            mlsAgpsNM_FreeAPList(GSList * access_point_list);
 
-void            styl_agps_nm_free_all(GObject *nm_client);
+void            mlsAgpsNM_FreeAll(GObject *nm_client);
 
 
 #ifdef __cplusplus

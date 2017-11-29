@@ -2,7 +2,7 @@
 if DEBUG
 DEBUG_CFLAGS = -g -ggdb
 else
-DEBUG_CFLAGS = -D__RELEASE__
+DEBUG_CFLAGS = 
 endif
 
 AM_CFLAGS = $(DEBUG_CFLAGS) -std=c99 -std=c99 -D_BSD_SOURCE -D_DEFAULT_SOURCE \
@@ -10,11 +10,13 @@ AM_CFLAGS = $(DEBUG_CFLAGS) -std=c99 -std=c99 -D_BSD_SOURCE -D_DEFAULT_SOURCE \
 
 AM_LDFLAGS = $(GLIB_LIBS)  -lstylagps -L./../src
 
+stylagps_SOURCES = mlsAgpsExample_Common.h mlsAgpsExample_Common.c
+
 ######################### simple EXAMPLE ########################
 
 bin_PROGRAMS = stylagps_demo
 
-stylagps_demo_SOURCES = mlsAgpsExample.c
+stylagps_demo_SOURCES = ${stylagps_SOURCES} mlsAgpsExample.c
 
 stylagps_demo_CFLAGS = $(AM_CFLAGS)
 
@@ -25,13 +27,13 @@ stylagps_demo_LDFLAGS = $(AM_LDFLAGS) $(GLIB_LIBS)  -lstylagps -L./../src
 
 bin_PROGRAMS += stylagps_send stylagps_receive
 
-stylagps_send_SOURCES = mlsAgpsExample_Common.h mlsAgpsSend.c
+stylagps_send_SOURCES = ${stylagps_SOURCES} mlsAgpsSend.c
 
 stylagps_send_CFLAGS = $(AM_CFLAGS) -I.
 
 stylagps_send_LDFLAGS = $(AM_LDFLAGS)
 
-stylagps_receive_SOURCES = mlsAgpsExample_Common.h mlsAgpsReceive.c
+stylagps_receive_SOURCES = ${stylagps_SOURCES} mlsAgpsReceive.c
 
 stylagps_receive_CFLAGS = $(AM_CFLAGS) -I.
 
@@ -41,13 +43,13 @@ stylagps_receive_LDFLAGS = $(AM_LDFLAGS)
 
 bin_PROGRAMS += stylagps_mqSend stylagps_mqReceive
 
-stylagps_mqSend_SOURCES = mlsAgpsExample_Common.h mlsAgpsMQSend.c
+stylagps_mqSend_SOURCES = ${stylagps_SOURCES} mlsAgpsMQSend.c
 
 stylagps_mqSend_CFLAGS = $(AM_CFLAGS) -I.
 
 stylagps_mqSend_LDFLAGS = $(AM_LDFLAGS) -lrt
 
-stylagps_mqReceive_SOURCES = mlsAgpsExample_Common.h mlsAgpsMQReceive.c
+stylagps_mqReceive_SOURCES = ${stylagps_SOURCES} mlsAgpsMQReceive.c
 
 stylagps_mqReceive_CFLAGS = $(AM_CFLAGS) -I.
 

@@ -81,11 +81,11 @@ int main(int argc, const char * argv[])
 
     memset(buffer, '\0', sizeof(buffer));
 
-    printf("%s Version: %s %s\n", ANSI_COLOR_MAGENTA, StylAgpsGetVersion(), ANSI_COLOR_RESET);
+    printf("%s Version: %s %s\n", ANSI_COLOR_MAGENTA, mlsAgps_GetVersion(), ANSI_COLOR_RESET);
 
     signal(SIGINT, HandleSignal);
 
-    GObject * nm_client = StylAgpsInit();
+    GObject * nm_client = mlsAgps_Init();
 
     while(run)
     {
@@ -108,7 +108,7 @@ int main(int argc, const char * argv[])
             }
         }
 
-        ret = StylAgpsGetLocation(nm_client, &latitude, &longitude, &accuracy);
+        ret = mlsAgps_GetLocation(nm_client, &latitude, &longitude, &accuracy);
 
         if (EXIT_SUCCESS == ret)
         {
@@ -128,7 +128,7 @@ int main(int argc, const char * argv[])
     /* cleanup */
     CHECK((mqd_t)-1 != mq_close(mq));
 
-    StylAgpsFinalize(nm_client);
+    mlsAgps_Finalize(nm_client);
 
     return ret;
 }

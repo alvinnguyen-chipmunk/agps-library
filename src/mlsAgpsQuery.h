@@ -30,7 +30,7 @@ extern "C"
 /********** Type definition section *******************************************/
 /********** Macro definition section*******************************************/
 /********** Function declaration section **************************************/
-gchar * styl_agps_query_exec(gchar * json_string, GHashTable * param_table);
+gchar * mlsAgpsQuery_Execute(gchar * json_string, GHashTable * param_table);
 
 
 #ifdef __cplusplus

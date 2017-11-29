@@ -2,7 +2,7 @@
 if DEBUG
 DEBUG_CFLAGS = -g -ggdb
 else
-DEBUG_CFLAGS = -D__RELEASE__
+DEBUG_CFLAGS = 
 endif
 
 stylagps_datadir = /etc/stylagps

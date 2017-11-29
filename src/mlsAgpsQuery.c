@@ -39,10 +39,10 @@ extern "C"
 /********** Local Macro definition section ************************************/
 /********** Local (static) variable definition ********************************/
 /********** Local (static) function declaration section ***********************/
-static size_t styl_agps_query_back_write(void *contents, size_t size, size_t nmemb, void *userp);
+static size_t mlsAgpsQuery_BackWrite(void *contents, size_t size, size_t nmemb, void *userp);
 
 /********** Local function definition section *********************************/
-static size_t styl_agps_query_back_write(void *contents, size_t size, size_t nmemb, void * userp)
+static size_t mlsAgpsQuery_BackWrite(void *contents, size_t size, size_t nmemb, void * userp)
 {
     gsize realsize = size * nmemb;
     if(realsize > 0)
@@ -56,11 +56,11 @@ static size_t styl_agps_query_back_write(void *contents, size_t size, size_t nme
 }
 
 /********** Global function definition section ********************************/
-gchar * styl_agps_query_exec(gchar * json_string, GHashTable * param_table)
+gchar * mlsAgpsQuery_Execute(gchar * json_string, GHashTable * param_table)
 {
     struct curl_slist *     curl_headers        = NULL;
     CURL*                   curl                = NULL;
-    guint                   curl_timeout        = STYL_AGPS_PARAM_TIMEOUT_DEFAULT;
+    guint                   curl_timeout        = MLS_AGPS_PARAM_TIMEOUT_DEFAULT;
     gchar *                 buffer              = NULL;
     gchar *                 buffer_1            = NULL;
     gchar *                 curl_url            = NULL;
@@ -115,7 +115,7 @@ gchar * styl_agps_query_exec(gchar * json_string, GHashTable * param_table)
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)curl_reponse_data);
 
     /* Hook up data handling function. */
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, styl_agps_query_back_write);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, mlsAgpsQuery_BackWrite);
 
     curl_headers = curl_slist_append(curl_headers, "content-type: application/json");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, curl_headers);
@@ -123,15 +123,15 @@ gchar * styl_agps_query_exec(gchar * json_string, GHashTable * param_table)
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_string);
 
     /* Don't wait forever, time out after curl_timeout seconds. */
-    buffer = styl_agps_param_key_to_value(param_table, STYL_AGPS_PARAM_TIMEOUT);
+    buffer = mlsAgpsParam_Key2Value(param_table, MLS_AGPS_PARAM_TIMEOUT);
     if(buffer)
     {
         curl_timeout = (gint)g_ascii_strtoull (buffer, NULL, 10);
     }
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, curl_timeout);
 
-    buffer = styl_agps_param_key_to_value(param_table, STYL_AGPS_PARAM_URL);
-    buffer_1 = styl_agps_param_key_to_value(param_table, STYL_AGPS_PARAM_KEY);
+    buffer = mlsAgpsParam_Key2Value(param_table, MLS_AGPS_PARAM_URL);
+    buffer_1 = mlsAgpsParam_Key2Value(param_table, MLS_AGPS_PARAM_KEY);
     if(buffer!=NULL && buffer_1!=NULL)
     {
         can_execute = TRUE;

@@ -36,7 +36,7 @@ extern "C"
 /********** Type definition section *******************************************/
 /********** Macro definition section*******************************************/
 /********** Function declaration section **************************************/
-gchar *styl_agps_json_new(GObject * nm_client);
+gchar *mlsAgpsJson_New(GObject * nm_client);
 
 #ifdef __cplusplus
 }

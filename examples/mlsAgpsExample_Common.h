@@ -26,20 +26,48 @@ extern "C"
 #endif
 
 /********** Include section ***************************************************/
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+
 /********** Constant and compile switch definition section ********************/
 /********** Type definition section *******************************************/
 /********** Macro definition section*******************************************/
+#define ANSI_COLOR_RED     "\x1b[1;31m"
+#define ANSI_COLOR_GREEN   "\x1b[1;32m"
+#define ANSI_COLOR_YELLOW  "\x1b[1;33m"
+#define ANSI_COLOR_BLUE    "\x1b[1;34m"
+#define ANSI_COLOR_MAGENTA "\x1b[1;35m"
+#define ANSI_COLOR_CYAN    "\x1b[1;36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+
+#define STYL_SHOW(format, ...)  \
+    mlsAgpsExampleCommon_Print(1, "%s[STYL AGPS INFO]: " format " %s\n", ANSI_COLOR_BLUE, ##__VA_ARGS__, ANSI_COLOR_RESET);
+
+#define STYL_SHOW_1(format, ...)  \
+    mlsAgpsExampleCommon_Print(1, "%s[STYL AGPS INFO]: " format " %s\n", ANSI_COLOR_GREEN, ##__VA_ARGS__, ANSI_COLOR_RESET);
+
+#define STYL_SHOW_2(format, ...)  \
+    mlsAgpsExampleCommon_Print(1, "%s[STYL AGPS  INFO]: " format " %s\n", ANSI_COLOR_YELLOW, ##__VA_ARGS__, ANSI_COLOR_RESET);
+
+#define STYL_INFO(format, ...)  \
+    mlsAgpsExampleCommon_Print(0, "%s[STYL AGPS INFO]: " format " %s\n", ANSI_COLOR_BLUE, ##__VA_ARGS__, ANSI_COLOR_RESET);
+
+#define STYL_INFO_1(format, ...)  \
+    mlsAgpsExampleCommon_Print(0, "%s[STYL AGPS INFO]: " format " %s\n", ANSI_COLOR_GREEN, ##__VA_ARGS__, ANSI_COLOR_RESET);
+
+#define STYL_ERROR(format, ...) \
+    mlsAgpsExampleCommon_Print(1, "%s[STYL AGPS ERROR]: " format " %s\n", ANSI_COLOR_RED, ##__VA_ARGS__, ANSI_COLOR_RESET);
+
+#define STYL_WARNING(format, ...)  \
+    mlsAgpsExampleCommon_Print(0, "%s[STYL AGPS WARNING]: " format " %s\n", ANSI_COLOR_YELLOW, ##__VA_ARGS__, ANSI_COLOR_RESET);
+
+#define STYL_DEBUG(format, ...)  \
+    mlsAgpsExampleCommon_Print(0, "%s[STYL AGPS DEBUG]: " format " %s\n", ANSI_COLOR_CYAN, ##__VA_ARGS__, ANSI_COLOR_RESET);
+
 #define QUEUE_NAME  "/test_queue"
 #define MAX_SIZE    1024
 #define MSG_STOP    "exit"
-
-#define ANSI_COLOR_RED     "\x1b[31m"
-#define ANSI_COLOR_GREEN   "\x1b[32m"
-#define ANSI_COLOR_YELLOW  "\x1b[33m"
-#define ANSI_COLOR_BLUE    "\x1b[34m"
-#define ANSI_COLOR_MAGENTA "\x1b[35m"
-#define ANSI_COLOR_CYAN    "\x1b[36m"
-#define ANSI_COLOR_RESET   "\x1b[0m"
 
 #define AGPS_QUEUE_NAME  "/stylagps_queue"
 
@@ -63,6 +91,11 @@ extern "C"
                            } while (0)
 
 /********** Function declaration section **************************************/
+/*!
+ * \brief mlsAgpsExampleCommon_Print: Print out some information.
+ */
+void mlsAgpsExampleCommon_Print(int isError, char *format, ...);
+
 
 #ifdef __cplusplus
 }

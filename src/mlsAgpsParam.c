@@ -37,16 +37,16 @@ extern "C"
 /********** Local Macro definition section ************************************/
 /********** Local (static) variable definition ********************************/
 /********** Local (static) function declaration section ***********************/
-static void styl_agps_param_print_core(gpointer key, gpointer value, gpointer userdata);
-static void styl_agps_param_free_core(gpointer key, gpointer value, gpointer userdata);
+static void mlsAgpsParam_Print_core(gpointer key, gpointer value, gpointer userdata);
+static void mlsAgpsParam_Free_core(gpointer key, gpointer value, gpointer userdata);
 
 /********** Local function definition section *********************************/
-static void styl_agps_param_print_core(gpointer key, gpointer value, gpointer userdata)
+static void mlsAgpsParam_Print_core(gpointer key, gpointer value, gpointer userdata)
 {
     g_message("\n   Key: %s\n   Value: %s\n", (gchar *)key, (gchar *)value);
 }
 
-static void styl_agps_param_free_core(gpointer key, gpointer value, gpointer userdata)
+static void mlsAgpsParam_Free_core(gpointer key, gpointer value, gpointer userdata)
 {
     g_free((gchar *)key);
     g_free((gchar *)value);
@@ -55,7 +55,7 @@ static void styl_agps_param_free_core(gpointer key, gpointer value, gpointer use
 }
 
 /********** Global function definition section ********************************/
-GHashTable * styl_agps_param_new(const gchar* filename)
+GHashTable * mlsAgpsParam_New(const gchar* filename)
 {
     FILE *fp = NULL;
     gchar buffer[255];
@@ -92,24 +92,24 @@ GHashTable * styl_agps_param_new(const gchar* filename)
     return param_table;
 }
 
-void styl_agps_param_free(GHashTable * param_table)
+void mlsAgpsParam_Free(GHashTable * param_table)
 {
     if(param_table)
     {
-        g_hash_table_foreach(param_table, styl_agps_param_free_core, NULL);
+        g_hash_table_foreach(param_table, mlsAgpsParam_Free_core, NULL);
         g_hash_table_remove_all(param_table);
     }
 }
 
-void styl_agps_param_print(GHashTable * param_table)
+void mlsAgpsParam_Print(GHashTable * param_table)
 {
     if(param_table)
-        g_hash_table_foreach(param_table, styl_agps_param_print_core, NULL);
+        g_hash_table_foreach(param_table, mlsAgpsParam_Print_core, NULL);
     else
         g_error("\nParameter is null.");
 }
 
-gchar * styl_agps_param_key_to_value(GHashTable * param_table, gchar * keyword)
+gchar * mlsAgpsParam_Key2Value(GHashTable * param_table, gchar * keyword)
 {
     gchar * value = NULL;
     if(g_hash_table_lookup_extended(param_table, (gconstpointer)keyword, NULL, (gpointer)&value))

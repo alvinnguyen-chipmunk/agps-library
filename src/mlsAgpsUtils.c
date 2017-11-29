@@ -31,10 +31,10 @@ extern "C"
 /********** Local Macro definition section ************************************/
 /********** Local (static) variable definition ********************************/
 /********** Local (static) function declaration section ***********************/
-static gboolean styl_agps_utils_data_parse_get(gchar ** tokens, const gchar * keyword, gdouble *container);
+static gboolean mlsAgpsUtils_ParseDataGet(gchar ** tokens, const gchar * keyword, gdouble *container);
 
 /********** Local function definition section *********************************/
-static gboolean styl_agps_utils_data_parse_get(gchar ** tokens, const gchar * keyword, gdouble *container)
+static gboolean mlsAgpsUtils_ParseDataGet(gchar ** tokens, const gchar * keyword, gdouble *container)
 {
     gchar * buffer = NULL;
     for(gint i=0; i<g_strv_length(tokens); i++)
@@ -58,8 +58,14 @@ static gboolean styl_agps_utils_data_parse_get(gchar ** tokens, const gchar * ke
 }
 
 /********** Global function definition section ********************************/
-gint styl_agps_utils_data_parse(gchar *data,
-                                gdouble **latitude, gdouble **longitude, gdouble **accuracy)
+/*!
+ * \brief mlsAgpsUtils_ParseData: Parse data of message response of location
+ */
+gint mlsAgpsUtils_ParseData(gchar *data,
+                             gdouble **longitude,
+                             gdouble **latitude,
+                             gdouble **accuracy)
+
 {
     gint ret = EXIT_FAILURE;
     gdouble tmp1 = 0, tmp2 = 0, tmp3 = 0;
@@ -67,9 +73,9 @@ gint styl_agps_utils_data_parse(gchar *data,
     gchar ** tokens = NULL;
     tokens = g_strsplit_set (data,"\n",-1);
 
-    if(styl_agps_utils_data_parse_get(tokens, "\"lat\":", &tmp1) == TRUE)
-        if(styl_agps_utils_data_parse_get(tokens, "\"lng\":", &tmp2) == TRUE)
-            if(styl_agps_utils_data_parse_get(tokens, "\"accuracy\":", &tmp3) == TRUE)
+    if(mlsAgpsUtils_ParseDataGet(tokens, "\"lat\":", &tmp1) == TRUE)
+        if(mlsAgpsUtils_ParseDataGet(tokens, "\"lng\":", &tmp2) == TRUE)
+            if(mlsAgpsUtils_ParseDataGet(tokens, "\"accuracy\":", &tmp3) == TRUE)
             {
                 **latitude  = tmp1;
                 **longitude = tmp2;
@@ -80,6 +86,21 @@ gint styl_agps_utils_data_parse(gchar *data,
     g_strfreev(tokens);
 
     return ret;
+}
+
+/*!
+ * \brief mlsAgpsUtils_Print: Print out some information.
+ */
+void mlsAgpsUtils_Print(gint isError, gchar *format, ...)
+{
+    if (isError == 0)
+        if(getenv("STYL_DEBUG")==NULL)
+            return;
+
+    va_list args;
+    va_start(args, format);
+    vprintf(format, args);
+    va_end(args);
 }
 
 #ifdef __cplusplus
